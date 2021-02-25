@@ -26,14 +26,13 @@ print("play")
 
 # --- 自動作曲開始 --- 
 # メロディラインを生成
-list_rhythm_melody0, list_melody_line0, list_volume_melody0 = make_melody( chord_progression, LIST_NOTE, BAR_LEN, M_KEY )
-list_rhythm_melody1, list_melody_line1, list_volume_melody1 = make_melody( chord_progression, LIST_NOTE, BAR_LEN, M_KEY )
+list_rhythm_melody0, list_melody_line0, list_volume_melody0 = make_melody( chord_progression, LIST_NOTE1, BAR_LEN, M_KEY )
+list_rhythm_melody1, list_melody_line1, list_volume_melody1 = make_melody0( chord_progression, LIST_NOTE2, BAR_LEN, M_KEY )
 
 
 # ベースラインを生成
-rhythm_pattern = [ BAR_LEN ]
-volume_pattern = [ 0.1 ]
-list_rhythm_base, list_melody_base, list_volume_base = make_base_line( chord_progression, BAR_LEN, rhythm_pattern, volume_pattern, M_KEY )
+
+list_rhythm_base, list_melody_base, list_volume_base = make_base_line( chord_progression, BAR_LEN, BASE_RYTHEM, BASE_VOLUME, M_KEY )
 
 stream.close()
 

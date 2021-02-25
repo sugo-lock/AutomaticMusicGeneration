@@ -9,8 +9,11 @@ dict_sound  = {
                 'C3':261.626,    'Db3':277.183,    'D3':293.665,    'Eb3':311.127,   'E3':329.628,   'F3':349.228,   'Gb3':369.994,   'G3':391.995,   'Ab3':415.305,   'A3':440.000,   'Bb3':466.164,    'B3':493.883,   
                 'C4':261.626*2,  'Db4':277.183*2,  'D4':293.665*2,  'Eb4':311.127*2, 'E4':329.628*2, 'F4':349.228*2, 'Gb4':369.994*2, 'G4':391.995*2, 'Ab4':415.305*2, 'A4':440.000*2, 'Bb4':466.164*2,  'B4':493.883*2,
                 'C5':261.626*4,  'Db5':277.183*4,  'D5':293.665*4,  'Eb5':311.127*4, 'E5':329.628*4, 'F5':349.228*4, 'Gb5':369.994*4, 'G5':391.995*4, 'Ab5':415.305*4, 'A5':440.000*4, 'Bb5':466.164*4,  'B5':493.883*4,
-                'C6':261.626*8,  'Db6':277.183*8,  'D6':293.665*8,  'Eb6':311.127*8, 'E6':329.628*8, 'F6':349.228*8, 'Gb6':369.994*8, 'G6':391.995*8, 'Ab6':415.305*8, 'A6':440.000*8, 'Bb6':466.164*8,  'B6':493.883*8 
+                'C6':261.626*8,  'Db6':277.183*8,  'D6':293.665*8,  'Eb6':311.127*8, 'E6':329.628*8, 'F6':349.228*8, 'Gb6':369.994*8, 'G6':391.995*8, 'Ab6':415.305*8, 'A6':440.000*8, 'Bb6':466.164*8,  'B6':493.883*8,
+                'C7':261.626*16, 'Db7':277.183*16, 'D7':293.665*16, 'Eb7':311.127*16,'E7':329.628*16,'F7':349.228*16,'Gb7':369.994*16,'G7':391.995*16,'Ab7':415.305*16,'A7':440.000*16,'Bb7':466.164*16, 'B7':493.883*16
+
 }
+
 
 
 
@@ -43,6 +46,14 @@ def select_key( key='C' ):
                               'D3', 'E3', 'Gb3', 'G3', 'A3', 'B3', 'Db4',
                               'D4', 'E4', 'Gb4', 'G4', 'A4', 'B4', 'Db5' ]
         return D_diatonic_chord
+
+    elif key == 'Db':
+        # Db_chord
+        Db_diatonic_chord  = [ 'Db2', 'Eb2', 'F2', 'Gb2', 'Ab2', 'Bb2', 'C3',
+                               'Db3', 'Eb3', 'F3', 'Gb3', 'Ab3', 'Bb3', 'C4',
+                               'Db4', 'Eb4', 'F4', 'Gb4', 'Ab4', 'Bb4', 'C5' ]
+        return Db_diatonic_chord
+
 
     elif key == 'E':
         # E_chord  世俗的な感じ、喜び、楽しさ、低俗感
@@ -181,7 +192,7 @@ def play_wave(stream, samples):
 ##################################
 # オクターブ上の音を返す
 ##################################
-def on_the_octave(sound, octave=1):
+def on_the_octave(sound='C4', octave=1):
     length = len(sound)
     i = 0 
     sound_on_the_octave = ""
@@ -191,13 +202,14 @@ def on_the_octave(sound, octave=1):
                 sound_on_the_octave += s
             else:
                 sound_on_the_octave += str(int(s) + octave -10 )
+            i+=1
     else:
         for s in sound:
             if i != (length - 1):
                 sound_on_the_octave += s
             else:
                 sound_on_the_octave += str(int(s) + octave )
-                
+            i+=1
     return sound_on_the_octave
 
 
@@ -211,7 +223,7 @@ def remove_specified_values(arr, value):
 
 
 ##################################
-# リズム生成
+# ランダムにリズム生成
 ##################################
 def make_rythem( BAR_LEN=L4, BAR_NUM=1, LIST_NOTE=[ L4, L8 ] ):
     print("--- Making Rythem ---")
@@ -233,7 +245,7 @@ def make_rythem( BAR_LEN=L4, BAR_NUM=1, LIST_NOTE=[ L4, L8 ] ):
                     list_bar_rhythem.append( Lx )
                     # 音量を決める
                     vol = random.random()
-                    if vol < 0.9:
+                    if vol < 1:
                         volume = 0.1
                     else:
                         volume = 0
@@ -245,10 +257,82 @@ def make_rythem( BAR_LEN=L4, BAR_NUM=1, LIST_NOTE=[ L4, L8 ] ):
     return t_list_rhythm, t_list_volume
 
 
+def make_rythem2( BAR_LEN=L4, BAR_NUM=1, LIST_NOTE=[ L4, L8 ] ):
+    print("--- Making Rythem ---")
+    
+    t_list_rhythm = []
+    t_list_volume = []
+    for i in range(BAR_NUM):
+        t_bar_len = BAR_LEN
+        list_bar_rhythem = []
+        
+        while t_bar_len > 0 :
+            if t_bar_len >= L2:
+                Lx = random.choice( [ L4, L8 ] )
+            elif  t_bar_len >= L4:
+                Lx = random.choice( [ L4, L8, L8, L8, L8,  ] )
+            elif  t_bar_len >= L8:
+                Lx = random.choice( [ L8, L8, L8, L8, L16, L16 ] )
+            elif  t_bar_len >= L16:
+                Lx = random.choice( [ L16 ] )
+
+            t_bar_len = t_bar_len - Lx
+            t_list_rhythm.append( Lx )
+            list_bar_rhythem.append( Lx )
+            # 音量を決める
+            vol = random.random()
+            if vol < 1:
+                volume = 0.1
+            else:
+                volume = 0
+            t_list_volume.append( volume )
+
+    return t_list_rhythm, t_list_volume
+
+
+def make_rythem3( BAR_LEN=L4, BAR_NUM=1, LIST_NOTE=[ L4, L8 ] ):
+    print("--- Making Rythem ---")
+    
+    t_list_bar_rythem = []
+    t_list_bar_volume = []
+
+    t_bar_len = BAR_LEN
+    while t_bar_len > 0 :
+        temp = LIST_NOTE.copy()
+        for lx in [ L2, L3, L4, L6, L8, L12, L16, L32 ]:
+            if t_bar_len >= lx:
+                Lx = random.choice( temp )
+                t_list_bar_rythem.append( Lx )
+                t_bar_len = t_bar_len - Lx
+                
+                # 音量を決める
+                vol = random.random()
+                if vol < 0.9:
+                    volume = 0.1
+                else:
+                    volume = 0
+                t_list_bar_volume.append( volume )
+                break
+            else:
+                remove_specified_values( temp, lx )
+    
+    t_list_rhythm = []
+    t_list_volume = []
+    
+    for i in range(BAR_NUM):
+        j = 0
+        for rythem in t_list_bar_rythem:
+            t_list_rhythm.append( t_list_bar_rythem[j] )
+            t_list_volume.append( t_list_bar_volume[j]  )
+            j+=1
+
+    return t_list_rhythm, t_list_volume
+
+
 ##################################
-# メロディ生成
+# メロディ生成(自動)
 ##################################
-def make_melody( chord_progression, list_def_rhythm=[], BAR_LEN = L4, key='C' ):
+def make_melody0( chord_progression, LIST_NOTE=[], BAR_LEN = L4, key='C' ):
     t_list_rhythm = []
     t_list_melody = []
     t_list_volume = []
@@ -256,21 +340,21 @@ def make_melody( chord_progression, list_def_rhythm=[], BAR_LEN = L4, key='C' ):
 
     # リズムを決める
     BAR_NUM = len(chord_progression)
-    t_list_rhythm, t_list_volume =  make_rythem( BAR_LEN, BAR_NUM, LIST_NOTE=[ L4, L6, L8, L16 ] )
+    t_list_rhythm, t_list_volume =  make_rythem2( BAR_LEN, BAR_NUM, LIST_NOTE )
 
-
+    print("--- Making Melody ---")
     # 音を決める
     i = 0
     l = BAR_LEN
     for Lx in t_list_rhythm:
         DiatonicChord = select_key(key)
-        chord = ret_chord(chord_progression[0], key)
-        if( Lx <= L4 ):
+        chord = ret_chord(chord_progression[i], key)
+        if( Lx <= L8 ):
             if melody in chord:
                 index_temp = DiatonicChord.index(melody)
+                n = random.choice([1, -1])
                 temp = chord.copy()
-                temp.append(DiatonicChord[index_temp + 1 ])
-                temp.append(DiatonicChord[index_temp - 1 ])
+                temp.append( DiatonicChord[ index_temp + n ] )
                 melody = random.choice(temp)
             else:
                 melody = random.choice(chord)        # コードトーンから選ぶ
@@ -278,16 +362,78 @@ def make_melody( chord_progression, list_def_rhythm=[], BAR_LEN = L4, key='C' ):
             melody = random.choice(chord)        # コードトーンから選ぶ
 
         print( Lx, melody )
+        # リストへ格納する
+        m = random.choice([1, 2])
+        m = 1
+        t_list_melody.append( on_the_octave(melody, m) )
 
         l = l - Lx
         if l <= 0:
             l = BAR_LEN
+            i+=1
             print("---")
         
+        #play_wave(stream, volume*tone(dict_sound[melody],   Lx, 1.0) ) 
+           
+    return t_list_rhythm, t_list_melody, t_list_volume
+
+
+def make_melody( chord_progression, LIST_NOTE=[], BAR_LEN = L4, key='C' ):
+    t_list_rhythm = []
+    t_list_melody = []
+    t_list_volume = []
+    melody = ""
+    m = 1
+    
+    # リズムを決める
+    BAR_NUM = len(chord_progression)
+    t_list_rhythm, t_list_volume =  make_rythem3( BAR_LEN, BAR_NUM, LIST_NOTE )
+
+    print("--- Making Melody ---")
+    # 音を決める
+    i = 0
+    l = BAR_LEN
+    for Lx in t_list_rhythm:
+        if l == BAR_LEN:
+            # オクターブ上がるかどうか
+            a = random.random()
+            if a > 0.95:
+                m += 1
+                if m > 2:
+                    m = 1
+        DiatonicChord = select_key(key)
+        chord = ret_chord(chord_progression[i], key)
+        if( Lx <= L16 ):
+            if melody in chord:
+                index_temp = DiatonicChord.index(melody)
+                n = random.choice([1, -1])
+                temp = chord.copy()
+                temp.append( DiatonicChord[ index_temp + 1 ] )
+                temp.append( DiatonicChord[ index_temp - 1 ] )
+                melody = random.choice(temp)
+            else:
+                melody = random.choice(chord)        # コードトーンから選ぶ
+        else:
+            # 一個前に選んだ音に近い音を選ぶ
+            try:
+                index_temp = DiatonicChord.index(melody)
+                temp = chord.copy()
+                temp.append( DiatonicChord[ index_temp + 1 ] )
+                temp.append( DiatonicChord[ index_temp - 1 ] )
+                melody = random.choice(temp)
+            except:
+                melody = random.choice(chord)        # コードトーンから選ぶ
+                pass
+        print( Lx, melody )
         # リストへ格納する
-        t_list_melody.append( on_the_octave(melody, 1) )
         
-        
+        t_list_melody.append( on_the_octave(melody, m) )
+
+        l = l - Lx
+        if l <= 0:
+            l = BAR_LEN
+            i+=1
+            print("---")
         
         #play_wave(stream, volume*tone(dict_sound[melody],   Lx, 1.0) ) 
            
@@ -299,6 +445,7 @@ def make_melody( chord_progression, list_def_rhythm=[], BAR_LEN = L4, key='C' ):
 # ベースライン生成
 ##################################
 def make_base_line( chord_progression=[], BAR_LEN = L4, rhythm_pattern=[], volume_pattern=[], key='C' ):
+    print("--- Making Base ---")
     list_rhythm = []
     list_melody = []
     list_volume = []
