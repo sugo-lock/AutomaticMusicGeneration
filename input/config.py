@@ -40,6 +40,18 @@ from input.util import *
 
 
 
+#--------------------------------------------------------------------------------
+# 使い方
+# ①曲のキーを決める ⇒ D_STRING_KEY
+# ②コード進行とコードの長さを決める
+#   → コード進行            ： D_LIST_CHORD_PREGRESSION
+#   → コード長              ： D_LIST_CHORD_LEN
+#   → 構成を決める          ： D_LIST_STRUCTURE
+#   → ベースのリズムを決める： D_LIST_BASE_RYTHEM
+# 
+#--------------------------------------------------------------------------------
+
+
 
 
 #--------------------------------------------------------------------------------
@@ -50,75 +62,78 @@ from input.util import *
 D_STRING_KEY             = "C"
 
 
-# コード進行                 # 一小節目    # 二小節目    # 三小節目    # 四小節目
-D_LIST_CHORD_PREGRESSION = [ [ IVM7 ],     [ III7 ],     [ VIm7 ],     [ I7 ],      ]      # コード
-D_LIST_CHORD_LEN         = [ [   L1 ],     [   L1 ],     [   L1 ],     [ L1 ],      ]      # コード長
-D_LIST_STRUCTURE         = [        0,            0,            0,          0,      ]      # 小節構成, どの小節とどの小節が同じか
-D_LIST_BASE_RYTHEM       = [       L2,           L2,           L2,         L2,      ]      # ベースリズム
+# コード進行                 # 一小節目           # 二小節目        # 三小節目           # 四小節目          # 一小節目           # 二小節目        # 三小節目           # 四小節目       
+D_LIST_CHORD_PREGRESSION = [ [ IVM7 , III7 ],     [ VIm7,  I7 ],    [ IVM7 , III7 ],     [ VIm7,  I7 ],      [ IVM7 , III7 ],     [ VIm7,  I7 ],    [ IVM7 , III7 ],     [ VIm7,  I7 ],    ]      # コード
+D_LIST_CHORD_LEN         = [ [   L2 ,   L2 ],     [   L2,  L2 ],    [   L2 ,   L2 ],     [   L2,  L2 ],      [   L2 ,   L2 ],     [   L2,  L2 ],    [   L2 ,   L2 ],     [   L2,  L2 ],    ]      # コード長
+D_LIST_STRUCTURE_MELODY  = [        0,                        0,                  0,                 0,             0,                        2,                  3,                 0,    ]      # メロディが同じ小節
+D_LIST_STRUCTURE_RYTHEM  = [        0,                        1,                  2,                 0,             0,                        2,                  3,                 0,    ]      # リズムがが同じ小節
+D_LIST_BASE_RYTHEM       = [       L2,                       L2,                 L2,                L2,            L2,                       L2,                 L2,                L2,    ]      # ベースリズム
 
 
-# PIANO1 リズム  
-D_LIST_RYTHEM1  = [ L4, L8, L8 ]
-D_INDEX_RYTHEM1 = 1
+# Percussion リズム
+D_INDEX_PRECUSSION_RYTHEM = 4
 
-# PIANO2 リズム
-D_LIST_RYTHEM2 = [ L2, L4 ]
-D_INDEX_RYTHEM2 = 0
-
-
-
-#--------------------------------------------------------------------------------
-# Aメロ
-#--------------------------------------------------------------------------------
-
-# キー定義
-D_STRING_KEY             = "D"
-
-
-# コード進行                 # 一小節目    # 二小節目    # 三小節目    # 四小節目
-D_LIST_CHORD_PREGRESSION = [ [ IVM7 ],     [ III7 ],     [ VIm7 ],     [ I7 ],      ]      # コード
-D_LIST_CHORD_LEN         = [ [   L1 ],     [   L1 ],     [   L1 ],     [ L1 ],      ]      # コード長
-D_LIST_STRUCTURE         = [        0,            0,            0,          0,      ]      # 小節構成, どの小節とどの小節が同じか
-D_LIST_BASE_RYTHEM       = [       L2,           L2,           L2,         L2,      ]      # ベースリズム
-
-
-# PIANO1 リズム  
-D_LIST_RYTHEM1  = [ L4, L8, L8 ]
-D_INDEX_RYTHEM1 = 13
-
-# PIANO2 リズム
-D_LIST_RYTHEM2 = [ L2, L4 ]
-D_INDEX_RYTHEM2 = 0
+# Piano リズム
+D_LIST_PIANO_RYTHEM = [ L4, L8, L8 ]
 
 
 
-
-
-#--------------------------------------------------------------------------------
-# Aメロ
-#--------------------------------------------------------------------------------
  
-# キー定義
-D_STRING_KEY             = "C"
-
-
-# コード進行                 # 一小節目           # 二小節目        # 三小節目           # 四小節目
-D_LIST_CHORD_PREGRESSION = [ [ IVM7 , III7 ],     [ VIm7,  I7 ],    [ IVM7 , III7 ],     [ VIm7,  I7 ],    ]      # コード
-D_LIST_CHORD_LEN         = [ [   L2 ,   L2 ],     [   L2,  L2 ],    [   L2 ,   L2 ],     [   L2,  L2 ],    ]      # コード長
-D_LIST_STRUCTURE         = [               0,                 0,                  0,                 0,    ]      # 小節構成, どの小節とどの小節が同じか
-D_LIST_BASE_RYTHEM       = [              L2,                L2,                 L2,                L2,    ]      # ベースリズム
-
-
-# PIANO1 リズム  
-D_LIST_RYTHEM1  = [ L4, L8, L8 ]
-D_INDEX_RYTHEM1 = 29
-
-# PIANO2 リズム
-D_LIST_RYTHEM2 = [ L4, L8, L8 ]
-D_INDEX_RYTHEM2 = 0
 
 
 
-
-
-
+##--------------------------------------------------------------------------------
+## Aメロ
+##--------------------------------------------------------------------------------
+#
+## キー定義
+#D_STRING_KEY             = "D"
+#
+#
+## コード進行                 # 一小節目    # 二小節目    # 三小節目    # 四小節目
+#D_LIST_CHORD_PREGRESSION = [ [ IVM7 ],     [ III7 ],     [ VIm7 ],     [ I7 ],      ]      # コード
+#D_LIST_CHORD_LEN         = [ [   L1 ],     [   L1 ],     [   L1 ],     [ L1 ],      ]      # コード長
+#D_LIST_STRUCTURE         = [        0,            0,            0,          0,      ]      # 小節構成, どの小節とどの小節が同じか
+#D_LIST_BASE_RYTHEM       = [       L2,           L2,           L2,         L2,      ]      # ベースリズム
+#
+#
+## PIANO1 リズム  
+#D_LIST_RYTHEM1  = [ L4, L8, L8 ]
+#D_INDEX_RYTHEM1 = 13
+#
+## PIANO2 リズム
+#D_LIST_RYTHEM2 = [ L2, L4 ]
+#D_INDEX_RYTHEM2 = 0
+#
+#
+#
+#
+#
+##--------------------------------------------------------------------------------
+## Aメロ
+##--------------------------------------------------------------------------------
+# 
+## キー定義
+#D_STRING_KEY             = "C"
+#
+#
+## コード進行                 # 一小節目           # 二小節目        # 三小節目           # 四小節目
+#D_LIST_CHORD_PREGRESSION = [ [ IVM7 , III7 ],     [ VIm7,  I7 ],    [ IVM7 , III7 ],     [ VIm7,  I7 ],    ]      # コード
+#D_LIST_CHORD_LEN         = [ [   L2 ,   L2 ],     [   L2,  L2 ],    [   L2 ,   L2 ],     [   L2,  L2 ],    ]      # コード長
+#D_LIST_STRUCTURE         = [               0,                 0,                  0,                 0,    ]      # 小節構成, どの小節とどの小節が同じか
+#D_LIST_BASE_RYTHEM       = [              L2,                L2,                 L2,                L2,    ]      # ベースリズム
+#
+#
+## PIANO1 リズム  
+#D_LIST_RYTHEM1  = [ L4, L8, L8 ]
+#D_INDEX_RYTHEM1 = 29
+#
+## PIANO2 リズム
+#D_LIST_RYTHEM2 = [ L4, L8, L8 ]
+#D_INDEX_RYTHEM2 = 0
+#
+#
+#
+#
+#
+#
