@@ -1,78 +1,196 @@
-# -*- coding: utf-8 -*-
-import pyaudio
-import pretty_midi
-import numpy as np
-import random
-
 from input.util import *
 from input.config import *
+import datetime
 
+OUT_FPATH                = "./output/"
 
-OUT_FPATH = "./output/"
-
-
-# 出力用のストリームを開く --- (*6)
-p = pyaudio.PyAudio()
-stream = p.open(format=pyaudio.paFloat32,
-                channels=1,
-                rate=RATE,
-                frames_per_buffer=1024,
-                output=True)
-
-print("play")
+#######################################
+#                                     #
+#   メロディを生成                    #
+#                                     #
+#######################################
 
 
 
-
-# --- 自動作曲開始 --- 
-# メロディラインを生成
-list_rhythm_melody0, list_melody_line0, list_volume_melody0 = make_melody( chord_progression, LIST_NOTE1, BAR_LEN, M_KEY )
-list_rhythm_melody1, list_melody_line1, list_volume_melody1 = make_melody0( chord_progression, LIST_NOTE2, BAR_LEN, M_KEY )
+ti_BarNum = len( D_LIST_CHORD_PREGRESSION )    # 小節数
 
 
-# ベースラインを生成
+##############################################################################
+# Piano1
+##############################################################################
 
-list_rhythm_base, list_melody_base, list_volume_base = make_base_line( chord_progression, BAR_LEN, BASE_RYTHEM, BASE_VOLUME, M_KEY )
-
-stream.close()
-
-
-# 出力用にリスト化
-list_rhythms = [ list_rhythm_melody0, list_rhythm_melody1, list_rhythm_base ]
-list_melody  = [ list_melody_line0,   list_melody_line1,   list_melody_base ]
-list_volume  = [ list_volume_melody0, list_volume_melody1, list_volume_base ]
-
-
-# MIDIファイルへ出力する
-cello_c_chord = pretty_midi.PrettyMIDI()# Pretty MIDIオブジェクトを作る。
-
-for i in range(len(list_rhythms)):
-    instrument_program = 4
-    instrument = pretty_midi.Instrument(program=instrument_program)
-
-    st = 0
-    j  = 0
-    for chord in list_melody[i]:
-        ed = st + list_rhythms[i][j]
-        
-        if isinstance(chord,list):
-            for sound in chord:
-                note_number = pretty_midi.note_name_to_number(sound)
-                note = pretty_midi.Note(velocity=120, pitch=note_number, start=st, end=ed)
-                if list_volume[ i ][ j ] > 0:
-                    instrument.notes.append(note)
-        else:
-            note_number = pretty_midi.note_name_to_number(chord)
-            note = pretty_midi.Note(velocity=120, pitch=note_number, start=st, end=ed)
-            if list_volume[ i ][ j ] > 0:
-                instrument.notes.append(note)
-        st = ed
-        j+=1
-
-    # PrettyMIDIオブジェクトに加えます。
-    cello_c_chord.instruments.append(instrument)
+sC_Piano1  = MidiList()
+# 各小節毎にメロディを生成する
+for i in range( ti_BarNum ):
+    tl_Bar_RythemList  = []
+    tl_Bar_MelodyList  = []
+    tl_Bar_VolumeList  = []
 
 
-# PrettyMIDIオブジェクトをMIDIファイルとして書き出す
-cello_c_chord.write(OUT_FPATH + 'out.mid')
+    # オリジナルの場合
+    if D_LIST_STRUCTURE[ i ] == 0:
+        ti_ChordPregressionLen = len( D_LIST_CHORD_PREGRESSION[ i ] )  # 一小節を構成するコードの数を取得
+        for j in range( ti_ChordPregressionLen ):
+            tl_Chord    = Dec2Chord( D_LIST_CHORD_PREGRESSION[ i ][ j ], D_STRING_KEY )   # コード進行を数字表記⇒英語表記にする
+            tl_ChordLen = D_LIST_CHORD_LEN[ i ][ j ]                                      # コードの拍を取得する
+            
+            tl_RythemList, tl_VolumeList = make_rythem2( tl_ChordLen, D_INDEX_RYTHEM1 )                 # 1コードのリズムを作成
+            tl_Melody                    = make_melody( tl_RythemList, tl_Chord, D_STRING_KEY )       # 1コードのメロディを作成
+            
+            # 一小節分のリストへ格納
+            ti_RythemListLen = len( tl_RythemList )
+            for k in range( ti_RythemListLen ):
+                tl_Bar_RythemList.append( tl_RythemList[k] )
+                tl_Bar_MelodyList.append( tl_Melody[k] )
+                tl_Bar_VolumeList.append( tl_VolumeList[k] )
+                print( tl_Melody[k], tl_RythemList[k], tl_VolumeList[k] )
+
+    # オリジナルじゃない場合
+    else:
+        tl_Bar_RythemList = sC_Piano1.tl_RythemList[D_LIST_STRUCTURE[ i ]-1]
+        tl_Bar_MelodyList = sC_Piano1.tl_MelodyList[D_LIST_STRUCTURE[ i ]-1]
+        tl_Bar_VolumeList = sC_Piano1.tl_VolumeList[D_LIST_STRUCTURE[ i ]-1]
+    
+    # MIDIクラスへ一小節分のメロディを格納
+    sC_Piano1.append( tl_Bar_MelodyList, tl_Bar_RythemList, tl_Bar_VolumeList )
+    # print( tl_Bar_RythemList, tl_Bar_MelodyList, tl_Bar_VolumeList )
+
+
+prg_num = random.choice( [9,10,11,12,13,15,16] )
+instrument0  = output_midi(sC_Piano1, prg_num)
+MIDI_FILE = pretty_midi.PrettyMIDI()        # Pretty MIDIオブジェクトを作る
+MIDI_FILE.instruments.append(instrument0)   # PrettyMIDIオブジェクトに加える
+
+
+##############################################################################
+# Piano2
+##############################################################################
+
+sC_Piano1  = MidiList()
+# 各小節毎にメロディを生成する
+for i in range( ti_BarNum ):
+    tl_Bar_RythemList  = []
+    tl_Bar_MelodyList  = []
+    tl_Bar_VolumeList  = []
+
+
+    # オリジナルの場合
+    if D_LIST_STRUCTURE[ i ] == 0:
+        ti_ChordPregressionLen = len( D_LIST_CHORD_PREGRESSION[ i ] )  # 一小節を構成するコードの数を取得
+        for j in range( ti_ChordPregressionLen ):
+            tl_Chord    = Dec2Chord( D_LIST_CHORD_PREGRESSION[ i ][ j ], D_STRING_KEY )   # コード進行を数字表記⇒英語表記にする
+            tl_ChordLen = D_LIST_CHORD_LEN[ i ][ j ]                                      # コードの拍を取得する
+            
+            tl_RythemList, tl_VolumeList = make_rythem( tl_ChordLen, D_LIST_RYTHEM2 )            # 1コードのリズムを作成
+            tl_Melody                    = make_melody( tl_RythemList, tl_Chord, D_STRING_KEY )      # 1コードのメロディを作成
+            
+            # 一小節分のリストへ格納
+            ti_RythemListLen = len( tl_RythemList )
+            for k in range( ti_RythemListLen ):
+                tl_Bar_RythemList.append( tl_RythemList[k] )
+                tl_Bar_MelodyList.append( tl_Melody[k] )
+                tl_Bar_VolumeList.append( tl_VolumeList[k] )
+                print( tl_Melody[k], tl_RythemList[k], tl_VolumeList[k] )
+
+    # オリジナルじゃない場合
+    else:
+        tl_Bar_RythemList = sC_Piano1.tl_RythemList[D_LIST_STRUCTURE[ i ]-1]
+        tl_Bar_MelodyList = sC_Piano1.tl_MelodyList[D_LIST_STRUCTURE[ i ]-1]
+        tl_Bar_VolumeList = sC_Piano1.tl_VolumeList[D_LIST_STRUCTURE[ i ]-1]
+    
+    # MIDIクラスへ一小節分のメロディを格納
+    sC_Piano1.append( tl_Bar_MelodyList, tl_Bar_RythemList, tl_Bar_VolumeList )
+    # print( tl_Bar_RythemList, tl_Bar_MelodyList, tl_Bar_VolumeList )
+
+
+prg_num = random.choice( [1,2,3,4,5,6,7] )
+instrument0  = output_midi(sC_Piano1, prg_num)
+MIDI_FILE.instruments.append(instrument0)   # PrettyMIDIオブジェクトに加える
+
+
+
+
+##############################################################################
+# Base1
+##############################################################################
+print("------------------------------------------------------------------------")
+sC_Base1   = MidiList()
+for i in range( ti_BarNum ):
+    tl_Bar_RythemList  = []
+    tl_Bar_MelodyList  = []
+    tl_Bar_VolumeList  = []
+
+    for j in range( len(D_LIST_CHORD_LEN[i]) ):
+        tl_Chord    = Dec2Chord( D_LIST_CHORD_PREGRESSION[ i ][ j ], D_STRING_KEY )
+        tl_ChordLen = D_LIST_CHORD_LEN[ i ][ j ]
+        while tl_ChordLen >= D_LIST_BASE_RYTHEM[i]:
+            tl_Bar_MelodyList.append( tl_Chord )
+            tl_Bar_RythemList.append( D_LIST_BASE_RYTHEM[i] )
+            tl_Bar_VolumeList.append( 0.1 )
+            tl_ChordLen = tl_ChordLen - D_LIST_BASE_RYTHEM[i]
+        if ( tl_ChordLen < D_LIST_BASE_RYTHEM[i] ) & ( tl_ChordLen != 0 ):
+            tl_Bar_MelodyList.append( tl_Chord )
+            tl_Bar_RythemList.append( tl_ChordLen )
+            tl_Bar_VolumeList.append( 0.1 )
+    sC_Base1.append( tl_Bar_MelodyList, tl_Bar_RythemList, tl_Bar_VolumeList )
+
+
+prg_num = random.choice( [25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40] )
+instrument0  = output_midi(sC_Base1, prg_num)
+MIDI_FILE.instruments.append(instrument0)   # PrettyMIDIオブジェクトに加える
+
+
+datetime_format = datetime.datetime.today()
+dt = datetime_format.strftime("%Y%m%d%H%M%S")
+
+MIDI_FILE.write( OUT_FPATH + 'out_' + str(dt) + '.mid' )
+
+
+
+#-------------
+#ti_ChordPregressionLen = len( D_LIST_CHORD_PREGRESSION )
+#
+#for i in range( ti_ChordPregressionLen ):
+#    tl_Chord    = Dec2Chord( D_LIST_CHORD_PREGRESSION[ i ], D_STRING_KEY )
+#    tl_ChordLen = D_LIST_CHORD_LEN[i]
+#    
+#    # Piano1
+#    tl_RythemList, tl_VolumeList = make_rythem( tl_ChordLen )                              # 1小節分のリズムを作成
+#    tl_Melody                    = make_melody( tl_RythemList, tl_Chord, D_STRING_KEY )    # 1小節分のメロディを作成
+#    ti_RythemListLen = len( tl_RythemList )
+#    for j in range( ti_RythemListLen ):
+#        sC_Piano1.append( tl_Melody[j], tl_RythemList[j], tl_VolumeList[j] )
+#        print( tl_Melody[j], tl_RythemList[j], tl_VolumeList[j] )
+#    
+#    
+#    # Piano2
+#    tl_RythemList, tl_VolumeList = make_rythem( tl_ChordLen )                              # 1小節分のリズムを作成
+#    tl_Melody                    = make_melody( tl_RythemList, tl_Chord, D_STRING_KEY )    # 1小節分のメロディを作成
+#    ti_RythemListLen = len( tl_RythemList )
+#    for j in range( ti_RythemListLen ):
+#        sC_Piano2.append( tl_Melody[j], tl_RythemList[j], tl_VolumeList[j] )
+#        print( tl_Melody[j], tl_RythemList[j], tl_VolumeList[j] )
+#    
+#    
+#    # Base1, 2
+#    while tl_ChordLen >= D_LIST_BASE_RYTHEM[0]:
+#        sC_Base1.append( tl_Chord, D_LIST_BASE_RYTHEM[0], 0.1 )
+#        tl_ChordLen = tl_ChordLen - D_LIST_BASE_RYTHEM[0]
+#    if ( tl_ChordLen < D_LIST_BASE_RYTHEM[0] ) & ( tl_ChordLen != 0 ):
+#        sC_Base1.append( tl_Chord, tl_ChordLen, 0.1 )
+
+
+
+# instrument0  = output_midi(sC_Piano1)
+# instrument1  = output_midi(sC_Piano2)
+# instrument2  = output_midi(sC_Base1)
+# instrument3  = output_midi(sC_Base1)
+# 
+# 
+# MIDI_FILE = pretty_midi.PrettyMIDI()       # Pretty MIDIオブジェクトを作る
+# MIDI_FILE.instruments.append(instrument0)   # PrettyMIDIオブジェクトに加える
+# MIDI_FILE.instruments.append(instrument1)   # PrettyMIDIオブジェクトに加える
+# MIDI_FILE.instruments.append(instrument2)  # PrettyMIDIオブジェクトに加える
+# MIDI_FILE.instruments.append(instrument3)  # PrettyMIDIオブジェクトに加える
+# MIDI_FILE.write( OUT_FPATH + 'out.mid' )
 

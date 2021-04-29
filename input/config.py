@@ -1,443 +1,124 @@
+# -*- coding: utf-8 -*-
 from input.util import *
 
-
-##################
-# �ꏬ�߂̒���
-##################
-BAR_LEN = L4
+########################################################################################################################################
 
 
-##################
-# �g�p���鉹���̃��X�g
-##################
-LIST_NOTE1 = [  L4, L4, L8, L8, L8 ]
-LIST_NOTE2 = [  L4, L8, L8, L8 ]
-
-BASE_RYTHEM = [ BAR_LEN/2, BAR_LEN/4,BAR_LEN/4, ]
-BASE_VOLUME = [ 0.1, 0.1, 0.1, 0.1 ]
+#--------------------------------------------------------------------------------
+# Cメジャー
+# I, IIm, IIIm, IV,  V, VIm, VIImb5
+# T,   S,    T,  S,  D,   T,      D
+#--------------------------------------------------------------------------------
 
 
-##################
-# �g�p�L�[
-# ['C','Dm','D','Db', 'E', 'F', 'G', 'A', 'B','Bb']
-##################
-M_KEY = 'B'
+#--------------------------------------------------------------------------------
+# 令和ボカロ進行
+# key = C
+# FM7,  E7,  Am7, C7
+# IVM7, III, VIm, I7
+#--------------------------------------------------------------------------------
 
-
-##################
-# �R�[�h�i�s
-##################
-Original = [
-    # A����
-    VI7,   VI7,   III7,    III7,   VI7,   VI7,   III7,    III7, 
-    VI7,   VI7,   V,       V,      VI,    VI,    VI,      VI, 
-
-    VI7,   VI7,   III7,    III7,   VI7,   VI7,   III7,    III7, 
-    VI7,   VI7,   V,       V,      VI,    VI,    VI,      VI, 
-
-
-    # B����  
-    IV,    IV,     V,      V,      VI,    VI,    I,     I,    
-    IV,    IV,     I,      I,      V,     V,     VI,    VI,
-
-    IV,    IV,     V,      V,      VI,    VI,    I,     I,    
-    IV,    IV,     I,      I,      V,     V,     VI,    VII,
-
-    # D����
-    IV,    IV,     IV,     IV,     I,     I,     V,     V,
-    IV,    IV,     IV,     IV,     I,     I,     VI7,   III,
-
-    IV,    IV,     IV,     IV,     I,     I,     V,     V,
-    IV,    IV,     IV,     IV,     I,     I,     VI7,   III,
-
-    # E����
-    IV,    IV,     V,      V,      VI,    VI,    V,     V,
-    IV,    IV,     V,      V,      VI,    VI,    I,     I,
-    
-    IV,    IV,     V,      V,      VI,    VI,    V,     V,
-    IV,    IV,     V,      V,      VI,    VI,    I,     I,
-
-]
-
-Original2 = [
-    # A����
-    VI,   III,  VI,     III,
-    IV,   I,    IIdim,  III7, 
-    VI,   III,  VI,     III,
-    IV,   I,    III7,   VI,   
-
-
-    # B����
-    II7,  II7,  IV7,    IV7,  
-    V,    V,    I,      I,    
-    II7,  II7,  IV7,    IV7,  
-    V,    IV,   I,      I,    
-
-
-   # �T�r
-    IV,   I,    V,      VI,
-    IV,   I,    V,      III7,
-    IV,   I,    V,      VI,
-    IV,   I,    V,      IV,
-]
-
-Original3 = [
-     II,  V,    VI,   I,
-     IV,  V,    III,  VI,
-     II,  V,    VI,   I,
-     IV,  V,    III,  VI,
-     
-#    I,   V,    VI,  V,
-#    IV,  V,    I,   I,
-#    I,   VII,  VI,  V,
-#    IV,  V,    I,   I,
-#    
-#    IV,  V,    VI,  VI,
-#    IV,  V,    VI,  VI,
-#    IV,  V,    VI,  VI,
-#    IV,  V,    VI,  VI,
-]
-
-Original4 = [
-     II,  II,  V,  V,  VI,   VI,   I,   I,
-     IV,  IV,  V,  V,  III,  III,  VI,  VI,
-     II,  II,  V,  V,  VI,   VI,   I,   I,
-     IV,  IV,  V,  V,  III,  III,  VI,  VI,
-
-     I,   I,   V,  V,  VI,   VI,   V,   V,
-     IV,  IV,  V,  V,  I,    I,    I,   I,
-     I,   I,   VII,VII,VI,   VI,   V,   V,
-     IV,  IV,  V,  V,  I,    I,    I,   I,
-
-     IV,  IV,  V,  V,  VI,   VI,   VI,  VI,
-     IV,  IV,  V,  V,  VI,   VI,   VI,  VI,
-     IV,  IV,  V,  V,  VI,   VI,   VI,  VI,
-     IV,  IV,  V,  V,  VI,   VI,   VI,  VI
-]
-
-Original5 = [
-    IV, V, III, VI,
-    IV, V, III, VI,
-    IV, V, III, VI,
-    IV, V, III, VI,
-
-    IV, V, VI,  VI,
-    IV, V, VI,  VI,
-    IV, V, VI,  VI,
-    IV, V, VI,  VI,
-
-]
-
-Original6 = [
-    # C����
-    IV,    IV,     V,      V,      VI,    VI,    I,     I,    
-    IV,    IV,     I,      I,      V,     V,     VI,    VI,
-    
-    IV,    IV,     V,      V,      VI,    VI,    I,     I,    
-    IV,    IV,     I,      I,      V,     V,     VI,    VI,
-
-    # E����
-    IV,    IV,     V,      V,      VI,    VI,    V,     V,
-    IV,    IV,     V,      V,      VI,    VI,    I,     I,
-    
-    IV,    IV,     V,      V,      VI,    VI,    V,     V,
-    IV,    IV,     V,      V,      VI,    VI,    I,     I,
-
-    # A����
-    VI,    VI,     VI,     VI,     IV,    IV,    IV,    V,
-    VI,    VI,     VI,     VI,     IV,    II,    III,   V,
-
-    VI,    VI,     VI,     VI,     IV,    IV,    IV,    V,
-    VI,    VI,     VI,     VI,     IV,    II,    III,   V,
-    
-    # �T�r
-    IV,   IV,   V,      V,       III7,  III7,  VI7,  VI7,
-    IV,   IV,   V,      V,       III7,  III7,  VI7,  VI7,
-
-    IV,   IV,   III7,   III7,    VI,    VI,   V7,   I, 
-    IV,   IV,   III7,   III7,    VI,    VI,   V7,   I, 
-]
-chord_progression = Original6
+#--------------------------------------------------------------------------------
+# 〇コード進行のルール
+# ・『Ｔ』は「Ｉ」「ＶＩm」のどちらでも使える。
+# ・『Ｄ』は「Ｖ」のみ使える。
+# ・『Ｓ』は「ＩＶ」「ＩＩm」のどちらでも使える。
+# 
+# ・「ＩＩm」は「Ｖ」にしか進めない。
+# ・「ＩＶ」から「ＶＩm」へは進めない。
+# ・ 元のコードから代理コードへは進めるが、代理コードから元のコードへは進めない。
+# ・ 曲の最初と最後は「Ｉ」が望ましい。
+#
+# 要は・・・
+# ・「Ｉ」は「ＩＩm」「ＩＶ」「Ｖ」「ＶＩm」の全てのコードに進める
+# ・「ＩＩm」は「Ｖ」にしか進めない。
+# ・「ＩＶ」は「Ｉ」か「ＩＩm」か「Ｖ」に進める。
+# ・「Ｖ」は「Ｉ」か「ＶＩm」に進める。
+# ・「ＶＩm」は「ＩＩm」か「ＩＶ」か「Ｖ」に進める。
+# 
+#--------------------------------------------------------------------------------
 
 
 
 
-##################################
-# (�Q�l)�R�[�h�i�s
-##################################
 
-# �����i�s
-RoyalRoadProgression = [
-    IV,    V,      III,    VI,
-]
+#--------------------------------------------------------------------------------
+# Aメロ
+#--------------------------------------------------------------------------------
 
-
-# �J�m���i�s
-CanonProgression = [ 
-    I,     V,      VI,     III,    IV,    I,     IV,    V 
-]
+# キー定義
+D_STRING_KEY             = "C"
 
 
-# 3456�i�s
-sanyongoroku = [  
-    III,   IV,     V,      VI
-]
+# コード進行                 # 一小節目    # 二小節目    # 三小節目    # 四小節目
+D_LIST_CHORD_PREGRESSION = [ [ IVM7 ],     [ III7 ],     [ VIm7 ],     [ I7 ],      ]      # コード
+D_LIST_CHORD_LEN         = [ [   L1 ],     [   L1 ],     [   L1 ],     [ L1 ],      ]      # コード長
+D_LIST_STRUCTURE         = [        0,            0,            0,          0,      ]      # 小節構成, どの小節とどの小節が同じか
+D_LIST_BASE_RYTHEM       = [       L2,           L2,           L2,         L2,      ]      # ベースリズム
 
 
-# 4156�i�s
-yonichigoroku = [  
-    IV,    I,      V,      VI
-]
+# PIANO1 リズム  
+D_LIST_RYTHEM1  = [ L4, L8, L8 ]
+D_INDEX_RYTHEM1 = 1
+
+# PIANO2 リズム
+D_LIST_RYTHEM2 = [ L2, L4 ]
+D_INDEX_RYTHEM2 = 0
 
 
 
-# �p�v���J    key=C
-papurika = [
-    # A����
-    I,   V,    VI,  V,
-    IV,  V,    I,   I,
-    I,   VII,  VI,  V,
-    IV,  V,    I,   I,
+#--------------------------------------------------------------------------------
+# Aメロ
+#--------------------------------------------------------------------------------
+
+# キー定義
+D_STRING_KEY             = "D"
 
 
-    # B����
-    VI,  III,  IV,  I,
-    IV,  V,    III, VI,
-    VI,  III,  IV,  I,
-    IV,  III,  VI,  VI,
+# コード進行                 # 一小節目    # 二小節目    # 三小節目    # 四小節目
+D_LIST_CHORD_PREGRESSION = [ [ IVM7 ],     [ III7 ],     [ VIm7 ],     [ I7 ],      ]      # コード
+D_LIST_CHORD_LEN         = [ [   L1 ],     [   L1 ],     [   L1 ],     [ L1 ],      ]      # コード長
+D_LIST_STRUCTURE         = [        0,            0,            0,          0,      ]      # 小節構成, どの小節とどの小節が同じか
+D_LIST_BASE_RYTHEM       = [       L2,           L2,           L2,         L2,      ]      # ベースリズム
+
+
+# PIANO1 リズム  
+D_LIST_RYTHEM1  = [ L4, L8, L8 ]
+D_INDEX_RYTHEM1 = 13
+
+# PIANO2 リズム
+D_LIST_RYTHEM2 = [ L2, L4 ]
+D_INDEX_RYTHEM2 = 0
+
+
+
+
+
+#--------------------------------------------------------------------------------
+# Aメロ
+#--------------------------------------------------------------------------------
  
-
-    # �T�r
-    IV,  V,    V,   VI,
-    IV,  I,    III, VI,
-    IV,  V,    V,   I,
-    VI,  II,   IV,  I,
-]
+# キー定義
+D_STRING_KEY             = "C"
 
 
-# ������ key=Dm
-lemon = [ 
-    # A����
-    VI,   V,    IV,     I,    
-    IV,   I,    IIdim,  III7, 
-    VI,   V,    IV,     I,    
-    IV,   I,    III7,   VI,   
+# コード進行                 # 一小節目           # 二小節目        # 三小節目           # 四小節目
+D_LIST_CHORD_PREGRESSION = [ [ IVM7 , III7 ],     [ VIm7,  I7 ],    [ IVM7 , III7 ],     [ VIm7,  I7 ],    ]      # コード
+D_LIST_CHORD_LEN         = [ [   L2 ,   L2 ],     [   L2,  L2 ],    [   L2 ,   L2 ],     [   L2,  L2 ],    ]      # コード長
+D_LIST_STRUCTURE         = [               0,                 0,                  0,                 0,    ]      # 小節構成, どの小節とどの小節が同じか
+D_LIST_BASE_RYTHEM       = [              L2,                L2,                 L2,                L2,    ]      # ベースリズム
 
 
-    # B����
-    II7,  II7,  IV7,    IV7,  
-    V,    V,    I,      I,    
-    II7,  II7,  IV7,    IV7,  
-    V,    IV,   I,      I,    
+# PIANO1 リズム  
+D_LIST_RYTHEM1  = [ L4, L8, L8 ]
+D_INDEX_RYTHEM1 = 29
 
-
-    # �T�r
-    IV,   I,    V,      VI,
-    IV,   I,    V,      III7,
-    IV,   I,    II7,    VI,
-    II7,  VI,   IV,     III,
-    II7,  VI,   IV,     I,
-]
-
-
-# The World Revolving  key=B
-The_World_Revolving = [
-    # A����
-    VI,    VI,     VI,     VI,     IV,    IV,    IV,    V,
-    VI,    VI,     VI,     VI,     IV,    II,    III,   V,
-
-    VI,    VI,     VI,     VI,     IV,    IV,    IV,    V,
-    VI,    VI,     VI,     VI,     IV,    II,    III,   V,
-
-    # B����
-    IV,    IV,     V,      V,      VI,    VI,    I,     I,    
-    IV,    IV,     I,      I,      V,     V,     VI,    VI,
-
-    IV,    IV,     V,      V,      VI,    VI,    I,     I,    
-    IV,    IV,     I,      I,      V,     V,     VI,    VI,
-
-    # C����
-    IV,    IV,     V,      V,      VI,    VI,    I,     I,    
-    IV,    IV,     I,      I,      V,     V,     VI,    VI,
-    
-    IV,    IV,     V,      V,      VI,    VI,    I,     I,    
-    IV,    IV,     I,      I,      V,     V,     VI,    VI,
-
-    # D����
-    IV,    IV,     IV,     IV,     I,     I,     V,     V,
-    IV,    IV,     IV,     IV,     I,     I,     VI7,   III,
-
-    IV,    IV,     IV,     IV,     I,     I,     V,     V,
-    IV,    IV,     IV,     IV,     I,     I,     VI7,   III,
-
-    # E����
-    IV,    IV,     V,      V,      VI,    VI,    V,     V,
-    IV,    IV,     V,      V,      VI,    VI,    I,     I,
-    
-    IV,    IV,     V,      V,      VI,    VI,    V,     V,
-    IV,    IV,     V,      V,      VI,    VI,    I,     I,
-]
-
-# ZUN�i�s
-ZUN_Progression = [ 
-    IV, IV,  V, V, VI, VI, VI, VI,
-    IV, IV,  V, V, VI, VI, VI, VI,
-    IV, IV,  V, V, VI, VI, VI, VI,
-    IV, IV,  V, V, VI, VI, VI, VI,
-]
-
-# �I�[�v�j���O�i�s
-opening_progression = [ 
-    I,     V,      VI,     V,
-    IV,    V,      I,      I,
-    I,     VII,    VI,     V,
-    IV,    V,      I,      I,
-
-    I,     II,     I,      II,
-    I,     II,     VII,    IV,
-]
-
-# To Love You More
-To_Love_You_More = [
-    I,     I,      I,      I,    
-    V,     V,      V,      V,
-    VI,    VI,     VI,     VI,  
-    III,   III,    V7,     III, 
-    I,     III,    VII,    III,
-    VII,   II,     VII,    II,
-    III,   I,      I,      I,
-    V,     V,      V7,     V7
-]
-
-# Field_of_Hopes_And_Dreams
-Field_of_Hopes_And_Dreams = [
-    VI7,   VI7,   III7,    III7,   VI7,   VI7,   III7,    III7, 
-    VI7,   VI7,   V,       V,      VI,    VI,    VI,      VI, 
-    VI7,   VI7,   III7,    III7,   VI7,   VI7,   III7,    III7, 
-    VI7,   VI7,   V,       V,      VI,    VI,    VI,      VI, 
-]
-
-# SUGIYAMA�i�s(4�x��������)
-SUGIYAMA_progression = [
-#    VI7,   VI7,    II7,    II7,
-#    V7,    V7,     I7,     I7,  
-#    VI,    VI,     VI,     VI,
-#
-#    VII7,  VII7,   III7,   III7,
-#    VI7,   VI7,    II7,    II7,
-#    V7,    V7,     I7,     I7,
-#    VI7,   VI7,    VI7,    VI7,
-
-    VII7,  III7,   VI7,    II7,
-    V7,    I7,     IV7,    VII7,
-#    II7,   VI7,    II7,    V7,
-#    I7,    IV7,    II7,    II7,
-]
-
-
-yoasobi = [
-    # A����
-    IV,   IV,   III7,   III7,    VI,    VI,   I,    I, 
-    IV,   IV,   III7,   III7,    VI,    VI,   I,    I, 
-
-    IV,   IV,   III7,   III7,    VI,    VI,   V7,   I, 
-    IV,   IV,   III7,   III7,    VI,    VI,   V7,   I, 
-
-    IV,   IV,   V,      V,       III7,  III7, VI7,  VI7,
-    IV,   IV,   V,      V,       III7,  III7, VI7,  VI7,
-
-    IV,   IV,   III7,   III7,    VI7,   VI7,  VI7,  VI7,
-    IV,   IV,   III7,   III7,    VI7,   VI7,  VI7,  VI7,
-
-    # B����
-    IV,   IV,   V,      V,       III7,  III7,  VI7,  VI7,
-    IV,   IV,   V,      V,       III7,  III7,  VI7,  VI7,
-
-    IV,   IV,   III7,   III7,    VI,    VI,   V7,   I, 
-    IV,   IV,   III7,   III7,    VI,    VI,   V7,   I, 
-
-    IV,   IV,   V,      V,       V,     V,    VI,   VI,
-    IV,   IV,   V,      V,       V,     V,    VI,   VI,
-
-    # �T�r
-    IV,   IV,   V,      V,       III7,  III7,  VI7,  VI7,
-    IV,   IV,   V,      V,       III7,  III7,  VI7,  VI7,
-
-    IV,   IV,   III7,   III7,    VI,    VI,   V7,   I, 
-    IV,   IV,   III7,   III7,    VI,    VI,   V7,   I, 
-
-    # C����
-    IV,   IV,   III7,   III7,    VI,    VI,   I,   I, 
-    IV,   IV,   III7,   III7,    VI,    VI,   I,   I, 
-
-    IV,   IV,   V,      V,       III7,  III7,  VI7,  VI7,
-    IV,   IV,   V,      V,       III7,  III7,  VI7,  VI7,
-
-]
-
-
-# MEGALOVANIA
-MEGALOVANIA = [
-    VI,   VI,   VI,    V,   VI,   IV,   VI,   IV,   
-    VI,   VI,   VI,    V,   VI,   IV,   VI,   V,
-    
-    VI,   VI,   VI,    V,   VI,   IV,   VI,   IV,   
-    VI,   VI,   VI,    V,   VI,   IV,   VI,   V,
-    
-    VI,   VI,   V,     V,   IV,   IV,   IV,   IV,
-    VI,   VI,   V,     V,   IV,   IV,   IV,   IV,
-
-    VI,   VI,   VI,    V,   VI,   IV,   VI,   IV,   
-    VI,   VI,   VI,    V,   VI,   IV,   VI,   V,
-
-    VI,   VI,   V,     V,   IV,   IV,   IV,   IV,
-    VI,   VI,   V,     V,   IV,   IV,   IV,   IV,
-
-]
+# PIANO2 リズム
+D_LIST_RYTHEM2 = [ L4, L8, L8 ]
+D_INDEX_RYTHEM2 = 0
 
 
 
-Original = [
-    VI,    VI,     VI,     VI,     IV,    IV,    IV,    V,
-    VI,    VI,     VI,     VI,     IV,     V,    VI,    I,
-
-    VI,    VI,     VI,     VI,     IV,    IV,    IV,    V,
-    VI,    VI,     VI,     VI,     IV,     V,    VI,    I,
 
 
-    VI7,   VI7,   III7,    III7,   VI7,   VI7,   III7,  III7, 
-    VI7,   VI7,   V,       V,      VI7,   VI7,   VI7,   VI7, 
-
-    VI7,   VI7,   III7,    III7,   VI7,   VI7,   III7,  III7, 
-    VI7,   VI7,   V,       V,      VI7,   VI7,   VI7,   VI7, 
-
-
-#    IV,   IV,     V,       V,      III7,  III7,  VI7,   VI7,
-#    IV,   IV,     V,       V,      III7,  III7,  VI7,   VI7,
-#
-#    IV,   IV,     V,       V,      III7,  III7,  VI7,   VI7,
-#    IV,   IV,     V,       V,      III7,  III7,  VI7,   VI7,
-#
-#
-#    IV,   IV,     IV,      IV,     V,     V,    V,      VI,
-#    IV,   IV,     IV,      IV,     V,     V,    VI,     VI,
-#
-#    IV7,  IV7,    IV7,     IV7,    V7,    V7,   V7,     VI7,
-#    IV7,  IV7,    IV7,     IV7,    V7,    V7,   VI7,    VI7,
-]
-
-
-# http://wingless-seraph.net/wp/2017/08/27/%E9%9F%B3%E6%A5%BD%E7%9F%A5%E8%AD%98%E3%82%BC%E3%83%AD%E3%81%8B%E3%82%89%E3%81%A7%E3%82%82%E3%82%B2%E3%83%BC%E3%83%A0%E9%9F%B3%E6%A5%BD%E3%82%92%E4%BD%9C%E3%82%8B%E3%81%AE%E3%81%AF%E3%81%9D%E3%82%93/
-Original_Battle = [
-    VI,     VI,    V,    V,    IV,    IV,    I,    I,
-    VI,     VI,    V,    V,    IV,    IV,    I,    I,
-    VI,     VI,    V,    V,    IV,    IV,    I,    I,
-    VI,     VI,    V,    V,    IV,    IV,    I,    I,
-
-]
-
-Original_Battle2 = [
-    VI,      V,    IV,    I,
-    VI,      V,    IV,    I,
-]
 

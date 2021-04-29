@@ -1,145 +1,34 @@
+# -*- coding: utf-8 -*-
+import pretty_midi
 import pyaudio
 import random
 
-##################################
-# ƒhƒŒƒ~...‚Ìü”g”‚ğ’è‹`
-##################################
-dict_sound  = { 
-                'C2':261.626/2,  'Db2':277.183/2,  'D2':293.665/2,  'Eb2':311.127/2, 'E2':329.628/2, 'F2':349.228/2, 'Gb2':369.994/2, 'G2':391.995/2, 'Ab2':415.305/2, 'A2':440.000/2, 'Bb2':466.164/2,  'B2':493.883/2, 
-                'C3':261.626,    'Db3':277.183,    'D3':293.665,    'Eb3':311.127,   'E3':329.628,   'F3':349.228,   'Gb3':369.994,   'G3':391.995,   'Ab3':415.305,   'A3':440.000,   'Bb3':466.164,    'B3':493.883,   
-                'C4':261.626*2,  'Db4':277.183*2,  'D4':293.665*2,  'Eb4':311.127*2, 'E4':329.628*2, 'F4':349.228*2, 'Gb4':369.994*2, 'G4':391.995*2, 'Ab4':415.305*2, 'A4':440.000*2, 'Bb4':466.164*2,  'B4':493.883*2,
-                'C5':261.626*4,  'Db5':277.183*4,  'D5':293.665*4,  'Eb5':311.127*4, 'E5':329.628*4, 'F5':349.228*4, 'Gb5':369.994*4, 'G5':391.995*4, 'Ab5':415.305*4, 'A5':440.000*4, 'Bb5':466.164*4,  'B5':493.883*4,
-                'C6':261.626*8,  'Db6':277.183*8,  'D6':293.665*8,  'Eb6':311.127*8, 'E6':329.628*8, 'F6':349.228*8, 'Gb6':369.994*8, 'G6':391.995*8, 'Ab6':415.305*8, 'A6':440.000*8, 'Bb6':466.164*8,  'B6':493.883*8,
-                'C7':261.626*16, 'Db7':277.183*16, 'D7':293.665*16, 'Eb7':311.127*16,'E7':329.628*16,'F7':349.228*16,'Gb7':369.994*16,'G7':391.995*16,'Ab7':415.305*16,'A7':440.000*16,'Bb7':466.164*16, 'B7':493.883*16
 
-}
 
+##################################
+# BPMã‚„éŸ³é•·ã‚’å®šç¾©
+##################################
+
+BPM = 120
+L1 = (60 / BPM * 4)
+L2, L3, L4, L6, L8, L12, L16, L32 = (L1/2, L1*3/8, L1/4, L1*3/16, L1/8, L1*3/32, L1/16, L1/32)
 
 
 
 ##################################
-# ƒL[’è‹`
+# ãƒ‰ãƒ¬ãƒŸ...ã®å‘¨æ³¢æ•°ã‚’å®šç¾©
 ##################################
-def select_key( key='C' ):
-    # https://musicsounds.art/key_decision/
-    # https://www.hakase-ac.jp/player/news/article/818
-    # https://www.hakase-ac.jp/player/news/article/840
-
-    if key == 'C':
-        # C_chord  ’Pƒ, ‘f–p, ˆÀ’è
-        C_diatonic_chord = [ 'C2', 'D2', 'E2', 'F2', 'G2', 'A2', 'B2',
-                             'C3', 'D3', 'E3', 'F3', 'G3', 'A3', 'B3',
-                             'C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4',
-                             'C5', 'D5', 'E5', 'F5', 'G5', 'A5', 'B5']
-        return C_diatonic_chord
-
-    elif key == 'Dm':
-        # Dm_chord  Œµl, ˆÃ‚¢‰©F
-        Dm_diatonic_chord = [ 'D2', 'E2', 'F2', 'G2', 'A2', 'Bb2', 'Db3',
-                              'D3', 'E3', 'F3', 'G3', 'A3', 'Bb3', 'Db4',
-                              'D4', 'E4', 'F4', 'G4', 'A4', 'Bb4', 'Db5' ]
-        return Dm_diatonic_chord
-
-    elif key == 'D':
-        # D_chord  Šì‚Ñ‚Ì’¸“_AjÕ“IAƒtƒ@ƒ“ƒtƒ@[ƒŒ
-        D_diatonic_chord  = [ 'D2', 'E2', 'Gb2', 'G2', 'A2', 'B2', 'Db3',
-                              'D3', 'E3', 'Gb3', 'G3', 'A3', 'B3', 'Db4',
-                              'D4', 'E4', 'Gb4', 'G4', 'A4', 'B4', 'Db5' ]
-        return D_diatonic_chord
-
-    elif key == 'Db':
-        # Db_chord
-        Db_diatonic_chord  = [ 'Db2', 'Eb2', 'F2', 'Gb2', 'Ab2', 'Bb2', 'C3',
-                               'Db3', 'Eb3', 'F3', 'Gb3', 'Ab3', 'Bb3', 'C4',
-                               'Db4', 'Eb4', 'F4', 'Gb4', 'Ab4', 'Bb4', 'C5' ]
-        return Db_diatonic_chord
+D_LIST_SOUND = [ 'C2', 'Db2', 'D2', 'Eb2', 'E2', 'F2', 'Gb2', 'G2', 'Ab2', 'A2', 'Bb2', 'B2', 
+                 'C3', 'Db3', 'D3', 'Eb3', 'E3', 'F3', 'Gb3', 'G3', 'Ab3', 'A3', 'Bb3', 'B3', 
+                 'C4', 'Db4', 'D4', 'Eb4', 'E4', 'F4', 'Gb4', 'G4', 'Ab4', 'A4', 'Bb4', 'B4',
+                 'C5', 'Db5', 'D5', 'Eb5', 'E5', 'F5', 'Gb5', 'G5', 'Ab5', 'A5', 'Bb5', 'B5'  ]
 
 
-    elif key == 'E':
-        # E_chord  ¢‘­“I‚ÈŠ´‚¶AŠì‚ÑAŠy‚µ‚³A’á‘­Š´
-        E_diatonic_chord  = [ 'E2', 'Gb2', 'Ab2', 'A2', 'B2', 'Db3', 'D3', 
-                              'E3', 'Gb3', 'Ab3', 'A3', 'B3', 'Db4', 'D4', 
-                              'E4', 'Gb4', 'Ab4', 'A4', 'B4', 'Db5', 'D5', 
-                              'E5', 'Gb5', 'Ab5', 'A5', 'B5', 'Db6', 'D6' ] 
-        return E_diatonic_chord
-
-    elif key == 'F':
-        # F_chord  –q‰Ì“IA‰ß‹‚Ö‚Ì‰ñ‘zA‰¸‚â‚©‚ÈŠì‚ÑA‰ñŒÚ
-        F_diatonic_chord = [  'F2', 'G2', 'Ab2', 'B2', 'C3', 'D3', 'E3', 
-                              'F3', 'G3', 'Ab3', 'B3', 'C4', 'D4', 'E4', 
-                              'F4', 'G4', 'Ab4', 'B4', 'C5', 'D5', 'E5', 
-                              'F5', 'G5', 'Ab5', 'B5', 'C6', 'D6', 'E6'  ]
-        return F_diatonic_chord
-
-    elif key == 'G':
-        # G_chord  –³‹C—Í‚³
-        G_diatonic_chord = [ 'G2', 'A2', 'B2', 'C3', 'D3', 'E3', 'Gb3',
-                             'G3', 'A3', 'B3', 'C4', 'D4', 'E4', 'Gb4',
-                             'G4', 'A4', 'B4', 'C5', 'D5', 'E5', 'Gb5',
-                             'G5', 'A5', 'B5', 'C6', 'D6', 'E6', 'Gb6' ]
-        return G_diatonic_chord
-
-    elif key == 'A':
-        # A_chord  –¾‚é‚¢, ‹¿‚«, ‘f–p
-        A_diatonic_chord = [ 'A2', 'B2',  'Db3', 'D3', 'E3', 'Gb3', 'Ab3',  
-                             'A3', 'B3',  'Db4', 'D4', 'E4', 'Gb4', 'Ab4',  
-                             'A4', 'B4',  'Db5', 'D5', 'E5', 'Gb5', 'Ab5',  
-                             'A5', 'B5',  'Db6', 'D6', 'E6', 'Gb6', 'Ab6',  ]
-        return A_diatonic_chord
-
-
-    elif key == 'B':
-        B_chord_IV_ = [ 'E4' ,  'Gb4', 'B4'  ] # Bm‚©‚çØ—p˜a‰¹
-
-        # B_chord  •sv‹c‚È‹P‚«‚Æ_¹‚³
-        B_diatonic_chord = [ 'B2', 'Db3', 'Eb3', 'E3', 'Gb3', 'Ab3', 'Bb3',  
-                             'B3', 'Db4', 'Eb4', 'E4', 'Gb4', 'Ab4', 'Bb4', 
-                             'B4', 'Db5', 'Eb5', 'E5', 'Gb5', 'Ab5', 'Bb5',
-                             'B5', 'Db6', 'Eb6', 'E6', 'Gb6', 'Ab6', 'Bb6' ]
-        return B_diatonic_chord
-
-
-    elif key == 'Bb':
-        # BbƒƒWƒƒ[
-        Bb_diatonic_chord = [ 'Bb2', 'C3', 'D3', 'Eb3', 'F3', 'G3', 'A3', 
-                              'Bb3', 'C4', 'D4', 'Eb4', 'F4', 'G4', 'A4', 
-                              'Bb4', 'C5', 'D5', 'Eb5', 'F5', 'G5', 'A5', 
-                              'Bb5', 'C6', 'D6', 'Eb6', 'F6', 'G6', 'A6', ]
-        return Bb_diatonic_chord
-
-list_key = ['C','Dm','D','E', 'F', 'G', 'A', 'B','Bb']
 
 
 ##################################
-# I ` VII‚ÌƒR[ƒh‚ğ’è‹`
+# åº¦æ•°è¡¨è¨˜ã‚³ãƒ¼ãƒ‰ã‚’å®šç¾©
 ##################################
-def ret_chord( chord_num = 'I', key = 'C' ):
-    
-    DiatonicChord = select_key(key)
-        
-    I      = [ DiatonicChord[7],   DiatonicChord[9],   DiatonicChord[11] ]
-    II     = [ DiatonicChord[8],   DiatonicChord[10],  DiatonicChord[12] ]
-    III    = [ DiatonicChord[9],   DiatonicChord[11],  DiatonicChord[13] ]
-    IV     = [ DiatonicChord[10],  DiatonicChord[12],  DiatonicChord[14] ]
-    V      = [ DiatonicChord[11],  DiatonicChord[13],  DiatonicChord[15] ]
-    VI     = [ DiatonicChord[12],  DiatonicChord[14],  DiatonicChord[16] ]
-    VII    = [ DiatonicChord[13],  DiatonicChord[15],  DiatonicChord[17] ]
-
-    I7     = [ DiatonicChord[7],    DiatonicChord[9],   DiatonicChord[11], DiatonicChord[13] ]
-    II7    = [ DiatonicChord[8],    DiatonicChord[10],  DiatonicChord[12], DiatonicChord[14] ]
-    III7   = [ DiatonicChord[9],    DiatonicChord[11],  DiatonicChord[13], DiatonicChord[15] ]
-    IV7    = [ DiatonicChord[10],   DiatonicChord[12],  DiatonicChord[14], DiatonicChord[16] ]
-    V7     = [ DiatonicChord[11],   DiatonicChord[13],  DiatonicChord[15], DiatonicChord[17] ]
-    VI7    = [ DiatonicChord[12],   DiatonicChord[14],  DiatonicChord[16], DiatonicChord[18] ]
-    VII7   = [ DiatonicChord[13],   DiatonicChord[15],  DiatonicChord[17], DiatonicChord[19] ]
-
-    IIdim  = [ DiatonicChord[8],   DiatonicChord[10],  DiatonicChord[12], DiatonicChord[13] ]
-
-    dict_chord = { 'I':I,   'II':II,   'III':III,    'IV':IV,  'V':V,   'VI':VI,   'VII':VII,  'I7':I7, 'II7':II7, 'III7':III7, 'IV7':IV, 'V7':V7, 'VI7':VI7, 'VII7':VII7, 'IIdim':IIdim  }
-
-    return dict_chord[ chord_num ]
-
-
 I      = 'I'
 II     = 'II'
 III    = 'III'
@@ -147,6 +36,31 @@ IV     = 'IV'
 V      = 'V'
 VI     = 'VI'
 VII    = 'VII'
+
+Im     = 'Im'
+IIm    = 'IIm'
+IIIm   = 'IIIm'
+IVm    = 'IVm'
+Vm     = 'Vm'
+VIm    = 'VIm'
+VIIm   = 'VIIm'
+
+Im7     = 'Im7'
+IIm7    = 'IIm7'
+IIIm7   = 'IIIm7'
+IVm7    = 'IVm7'
+Vm7     = 'Vm7'
+VIm7    = 'VIm7'
+VIIm7   = 'VIIm7'
+
+IM7     = 'IM7'
+IIM7    = 'IIM7'
+IIIM7   = 'IIIM7'
+IVM7    = 'IVM7'
+VM7     = 'VM7'
+VIM7    = 'VIM7'
+VIIM7   = 'VIIM7'
+
 
 I7     = 'I7'
 II7    = 'II7'
@@ -159,38 +73,462 @@ VII7   = 'VII7'
 IIdim  = 'IIdim'
 
 
-##################################
-# ƒTƒ“ƒvƒŠƒ“ƒOƒŒ[ƒg’è‹`
-##################################
-RATE = 44100
-
-##################################
-# BPM‚â‰¹’·‚ğ’è‹`
-##################################
-
-BPM = 120
-L1 = (60 / BPM * 4)
-L2, L3, L4, L6, L8, L12, L16, L32 = (L1/2, L1*3/8, L1/4, L1*3/16, L1/8, L1*3/32, L1/16, L1/32)
 
 
-##################################
-# ƒTƒCƒ“”g‚ğ¶¬
-##################################
-def tone(freq, length, gain):
-    slen = int(length * RATE)
-    t = float(freq) * np.pi * 2 / RATE
-    return np.sin(np.arange(slen) * t) * gain
+#################################
+# æ•°å­—è¡¨è¨˜ã®ã‚³ãƒ¼ãƒ‰ã‹ã‚‰å’ŒéŸ³ã®ãƒªã‚¹ãƒˆã‚’ä½œã‚‹
+#################################
+
+def Dec2Chord( ts_NumChord ='I', ts_Key= 'C' ):
+    # Key
+    if   ts_Key == 'C':
+        ti_idx = 0 +12
+    elif ts_Key == 'D':
+        ti_idx = 2 +12
+    elif ts_Key == 'E':
+        ti_idx = 4 +12
+    elif ts_Key == 'F':
+        ti_idx = 5 +12
+    elif ts_Key == 'G':
+        ti_idx = 7 +12
+    elif ts_Key == 'A':
+        ti_idx = 9 +12
+    elif ts_Key == 'B':
+        ti_idx = 11 +12
+
+    
+    
+    # Iï½VII
+    # VII
+    if   "VII" in ts_NumChord:
+        ti_idx = ti_idx + 11
+    # VI
+    elif "VI"  in ts_NumChord:
+        ti_idx = ti_idx + 9
+    # IV
+    elif "IV"  in ts_NumChord:
+        ti_idx = ti_idx + 5
+    # V
+    elif "V"   in ts_NumChord:
+        ti_idx = ti_idx + 7
+    # III
+    elif "III" in ts_NumChord:
+        ti_idx = ti_idx + 4
+    # II
+    elif "II"  in ts_NumChord:
+        ti_idx = ti_idx + 2
+    # I
+    elif "I"   in ts_NumChord:
+        ti_idx = ti_idx + 0
+
+    
+    
+    # Isus4
+    if "sus4" in ts_NumChord:
+       return   [ D_LIST_SOUND[ ti_idx + 0  ],           D_LIST_SOUND[ ti_idx +  5 ],          D_LIST_SOUND[ ti_idx +  7 ]  ]
+    
+    # Isus2
+    elif "sus2" in ts_NumChord:
+       return   [ D_LIST_SOUND[ ti_idx + 0  ],           D_LIST_SOUND[ ti_idx +  2 ],          D_LIST_SOUND[ ti_idx +  7 ]  ]
+
+    # Iaug
+    elif "aug" in ts_NumChord:
+       return   [ D_LIST_SOUND[ ti_idx + 0  ],           D_LIST_SOUND[ ti_idx +  4 ],          D_LIST_SOUND[ ti_idx +  8 ]  ]
+
+    # Ialt
+    elif "alt" in ts_NumChord:
+       return   [ D_LIST_SOUND[ ti_idx + 0  ],           D_LIST_SOUND[ ti_idx +  4 ],          D_LIST_SOUND[ ti_idx +  6 ]  ]
+
+    # I6
+    elif "6"   in ts_NumChord:
+       return   [ D_LIST_SOUND[ ti_idx + 0  ],           D_LIST_SOUND[ ti_idx +  4 ],          D_LIST_SOUND[ ti_idx +  7 ],         D_LIST_SOUND[ ti_idx +  9 ]  ]
+
+    # IM7
+    elif "M7"  in ts_NumChord:
+       return   [ D_LIST_SOUND[ ti_idx + 0  ],           D_LIST_SOUND[ ti_idx +  4 ],          D_LIST_SOUND[ ti_idx +  7 ],         D_LIST_SOUND[ ti_idx + 11 ]  ]
+
+    # Im7
+    elif "m7"  in ts_NumChord:
+       return   [ D_LIST_SOUND[ ti_idx + 0  ],           D_LIST_SOUND[ ti_idx +  3 ],          D_LIST_SOUND[ ti_idx +  7 ],         D_LIST_SOUND[ ti_idx + 10 ]  ]
+
+    # I7
+    elif "7"   in ts_NumChord:
+       return   [ D_LIST_SOUND[ ti_idx + 0  ],           D_LIST_SOUND[ ti_idx +  4 ],          D_LIST_SOUND[ ti_idx +  7 ],         D_LIST_SOUND[ ti_idx + 10 ]  ]
+
+    # Idim
+    elif "dim" in ts_NumChord:
+       return   [ D_LIST_SOUND[ ti_idx + 0  ],           D_LIST_SOUND[ ti_idx +  3 ],          D_LIST_SOUND[ ti_idx +  6 ],         D_LIST_SOUND[ ti_idx +  9 ]  ]
+
+    # Im
+    if "m" in ts_NumChord:
+       return   [ D_LIST_SOUND[ ti_idx + 0  ],           D_LIST_SOUND[ ti_idx +  3 ],          D_LIST_SOUND[ ti_idx +  7 ]  ]
+
+    # Iadd9
+    elif "add9"   in ts_NumChord:
+       return   [ D_LIST_SOUND[ ti_idx + 0  ],           D_LIST_SOUND[ ti_idx +  4 ],          D_LIST_SOUND[ ti_idx +  7 ],         D_LIST_SOUND[ ti_idx +  14 ]  ]
+
+    # I9
+    elif "9"   in ts_NumChord:
+       return   [ D_LIST_SOUND[ ti_idx + 0  ],           D_LIST_SOUND[ ti_idx +  4 ],          D_LIST_SOUND[ ti_idx +  7 ],         D_LIST_SOUND[ ti_idx +  10 ],         D_LIST_SOUND[ ti_idx +  14 ]  ]
+
+    # I
+    else:
+        return  [ D_LIST_SOUND[ ti_idx + 0  ],           D_LIST_SOUND[ ti_idx +  4 ],          D_LIST_SOUND[ ti_idx +  7 ]  ]
 
 
-##################################
-# Ä¶
-##################################
-def play_wave(stream, samples):
-    stream.write(samples.astype(np.float32).tostring())
 
 
+####################################
+# ã‚­ãƒ¼ã‹ã‚‰ãƒ€ã‚¤ã‚¢ãƒˆãƒ‹ãƒƒã‚¯ã‚³ãƒ¼ãƒ‰ã®ãƒªã‚¹ãƒˆã‚’ä½œã‚‹
+####################################
+def make_diatonic_chord( ts_Key='C' ):
+
+    if ts_Key == 'C':
+        # C_chord  å˜ç´”, ç´ æœ´, å®‰å®š
+        C_diatonic_chord = [ 'C2', 'D2', 'E2', 'F2', 'G2', 'A2', 'B2',
+                             'C3', 'D3', 'E3', 'F3', 'G3', 'A3', 'B3',
+                             'C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4',
+                             'C5', 'D5', 'E5', 'F5', 'G5', 'A5', 'B5']
+        return C_diatonic_chord
+
+    elif ts_Key == 'Dm':
+        # Dm_chord  å³ç²›, æš—ã„é»„è‰²
+        Dm_diatonic_chord = [ 'D2', 'E2', 'F2', 'G2', 'A2', 'Bb2', 'Db3',
+                              'D3', 'E3', 'F3', 'G3', 'A3', 'Bb3', 'Db4',
+                              'D4', 'E4', 'F4', 'G4', 'A4', 'Bb4', 'Db5' ]
+        return Dm_diatonic_chord
+
+    elif ts_Key == 'D':
+        # D_chord  å–œã³ã®é ‚ç‚¹ã€ç¥ç¥­çš„ã€ãƒ•ã‚¡ãƒ³ãƒ•ã‚¡ãƒ¼ãƒ¬
+        D_diatonic_chord  = [ 'D2', 'E2', 'Gb2', 'G2', 'A2', 'B2', 'Db3',
+                              'D3', 'E3', 'Gb3', 'G3', 'A3', 'B3', 'Db4',
+                              'D4', 'E4', 'Gb4', 'G4', 'A4', 'B4', 'Db5' ]
+        return D_diatonic_chord
+
+    elif ts_Key == 'Db':
+        # Db_chord
+        Db_diatonic_chord  = [ 'Db2', 'Eb2', 'F2', 'Gb2', 'Ab2', 'Bb2', 'C3',
+                               'Db3', 'Eb3', 'F3', 'Gb3', 'Ab3', 'Bb3', 'C4',
+                               'Db4', 'Eb4', 'F4', 'Gb4', 'Ab4', 'Bb4', 'C5' ]
+        return Db_diatonic_chord
+
+
+    elif ts_Key == 'E':
+        # E_chord  ä¸–ä¿—çš„ãªæ„Ÿã˜ã€å–œã³ã€æ¥½ã—ã•ã€ä½ä¿—æ„Ÿ
+        E_diatonic_chord  = [ 'E2', 'Gb2', 'Ab2', 'A2', 'B2', 'Db3', 'D3', 
+                              'E3', 'Gb3', 'Ab3', 'A3', 'B3', 'Db4', 'D4', 
+                              'E4', 'Gb4', 'Ab4', 'A4', 'B4', 'Db5', 'D5', 
+                              'E5', 'Gb5', 'Ab5', 'A5', 'B5', 'Db6', 'D6' ] 
+        return E_diatonic_chord
+
+    elif ts_Key == 'F':
+        # F_chord  ç‰§æ­Œçš„ã€éå»ã¸ã®å›æƒ³ã€ç©ã‚„ã‹ãªå–œã³ã€å›é¡§
+        F_diatonic_chord = [  'F2', 'G2', 'Ab2', 'B2', 'C3', 'D3', 'E3', 
+                              'F3', 'G3', 'Ab3', 'B3', 'C4', 'D4', 'E4', 
+                              'F4', 'G4', 'Ab4', 'B4', 'C5', 'D5', 'E5', 
+                              'F5', 'G5', 'Ab5', 'B5', 'C6', 'D6', 'E6'  ]
+        return F_diatonic_chord
+
+    elif ts_Key == 'G':
+        # G_chord  ç„¡æ°—åŠ›ã•
+        G_diatonic_chord = [ 'G2', 'A2', 'B2', 'C3', 'D3', 'E3', 'Gb3',
+                             'G3', 'A3', 'B3', 'C4', 'D4', 'E4', 'Gb4',
+                             'G4', 'A4', 'B4', 'C5', 'D5', 'E5', 'Gb5',
+                             'G5', 'A5', 'B5', 'C6', 'D6', 'E6', 'Gb6' ]
+        return G_diatonic_chord
+
+    elif ts_Key == 'A':
+        # A_chord  æ˜ã‚‹ã„, éŸ¿ã, ç´ æœ´
+        A_diatonic_chord = [ 'A2', 'B2',  'Db3', 'D3', 'E3', 'Gb3', 'Ab3',  
+                             'A3', 'B3',  'Db4', 'D4', 'E4', 'Gb4', 'Ab4',  
+                             'A4', 'B4',  'Db5', 'D5', 'E5', 'Gb5', 'Ab5',  
+                             'A5', 'B5',  'Db6', 'D6', 'E6', 'Gb6', 'Ab6',  ]
+        return A_diatonic_chord
+
+
+    elif ts_Key == 'B':
+        B_chord_IV_ = [ 'E4' ,  'Gb4', 'B4'  ] # Bmã‹ã‚‰å€Ÿç”¨å’ŒéŸ³
+
+        # B_chord  ä¸æ€è­°ãªè¼ãã¨ç¥è–ã•
+        B_diatonic_chord = [ 'B2', 'Db3', 'Eb3', 'E3', 'Gb3', 'Ab3', 'Bb3',  
+                             'B3', 'Db4', 'Eb4', 'E4', 'Gb4', 'Ab4', 'Bb4', 
+                             'B4', 'Db5', 'Eb5', 'E5', 'Gb5', 'Ab5', 'Bb5',
+                             'B5', 'Db6', 'Eb6', 'E6', 'Gb6', 'Ab6', 'Bb6' ]
+        return B_diatonic_chord
+
+
+    elif ts_Key == 'Bb':
+        # Bbãƒ¡ã‚¸ãƒ£ãƒ¼
+        Bb_diatonic_chord = [ 'Bb2', 'C3', 'D3', 'Eb3', 'F3', 'G3', 'A3', 
+                              'Bb3', 'C4', 'D4', 'Eb4', 'F4', 'G4', 'A4', 
+                              'Bb4', 'C5', 'D5', 'Eb5', 'F5', 'G5', 'A5', 
+                              'Bb5', 'C6', 'D6', 'Eb6', 'F6', 'G6', 'A6', ]
+        return Bb_diatonic_chord
+
+    else:
+        return []
+
+
+#######################################################################################
+#  ãƒªã‚ºãƒ ã‚’ä½œã‚‹
+#  ã‚³ãƒ¼ãƒ‰é•·ã‚’åˆ†å‰²ã—ã¦ãƒªã‚ºãƒ ã‚’ä½œã‚‹
+#######################################################################################
+
+# --- ãƒ‘ã‚¿ãƒ¼ãƒ³1 ---
+
+def make_rythem( ti_ChordLen, tl_LxList_ ):
+    print("--- Making Rythem ---")
+    
+    tl_RythemList = []  # ãƒªã‚ºãƒ ã®ãƒªã‚¹ãƒˆ
+    tl_VolumeList = []  # éŸ³ç¬¦ or ä¼‘ç¬¦
+    
+#    tl_LxList = [ L8, L16 ]  # é¸æŠå¯èƒ½ãªéŸ³ç¬¦ã®ãƒªã‚¹ãƒˆ
+    tl_LxList = tl_LxList_.copy()
+    i = 0
+    while ti_ChordLen > 0 :
+        for ts_Lx in [ L2, L3, L4, L6, L8, L12, L16, L32 ]:
+            # æ®‹ã‚Šã®é•·ã• â‰§ éŸ³ç¬¦ã®å ´åˆ
+            if ti_ChordLen >= ts_Lx:
+                if i != 0:
+                    ts_SelectedLx = random.choice( tl_LxList )      # é¸æŠãƒªã‚¹ãƒˆã‹ã‚‰éŸ³ç¬¦ã‚’é¸æŠ
+                # ã‚³ãƒ¼ãƒ‰ã®å§‹ã¾ã‚Šã®æ‹ã®å ´åˆ
+                else:
+                    p = random.random()
+                    if p < 0.2:
+                        ts_SelectedLx = max( tl_LxList )                # ä¸€ç•ªé•·ã„æ‹ã‚’é¸æŠ
+                    else:
+                        ts_SelectedLx = random.choice( tl_LxList )      # é¸æŠãƒªã‚¹ãƒˆã‹ã‚‰éŸ³ç¬¦ã‚’é¸æŠ
+                ti_ChordLen = ti_ChordLen - ts_SelectedLx           # æ®‹ã‚Šã®é•·ã•ã‚’æ›´æ–°
+                i += 1
+
+                tl_RythemList.append( ts_SelectedLx )
+                
+                # éŸ³ç¬¦ or ä¼‘ç¬¦
+                if ( ts_SelectedLx <= L8 ) & ( ( i-1 )==0 ):    # çŸ­ã„æ‹ ã‹ã¤ ä¸€æ‹ç›®ã®å ´åˆ
+                    p = random.random()
+                    if p < 0.9:
+                        tf_volume = 0.1
+                    else: 
+                        tf_volume = 0
+                else:
+                    tf_volume = 0.1
+                tl_VolumeList.append( tf_volume )
+                break
+            # æ®‹ã‚Šã®é•·ã• < éŸ³ç¬¦ã®å ´åˆ
+            else:
+                remove_specified_values( tl_LxList, ts_Lx )     # é¸æŠãƒªã‚¹ãƒˆã‹ã‚‰éŸ³ç¬¦ã‚’å‰Šé™¤
+
+    return tl_RythemList, tl_VolumeList
+
+# --- ãƒ‘ã‚¿ãƒ¼ãƒ³2 ---
+
+def make_rythem2( ti_ChordLen, ti_indx ):
+    print("--- Making Rythem ---")
+    tl_RythemList = []  # ãƒªã‚ºãƒ ã®ãƒªã‚¹ãƒˆ
+    tl_VolumeList = []  # éŸ³ç¬¦ or ä¼‘ç¬¦
+    
+    # ãƒ‘ã‚¿ãƒ¼ãƒ³å®šç¾© #
+    tl_Rythem_Pattern_List = [ 
+        # 8ãƒ“ãƒ¼ãƒˆ
+        [ [  L8,  L8,  L8,  L8,  L8,  L8,  L8,  L8  ],       # 0
+          [ 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, ]   ],   # 
+                                                             # 
+        [ [  L4,       L8,  L8,  L4,       L4,      ],       # 1
+          [ 0.1,      0.1, 0.1, 0.1,      0.1,      ]   ],   # 
+                                                             # 
+        [ [  L4,       L4,       L8,  L8,  L4,      ],       # 2
+          [ 0.1,      0.1,      0.1, 0.1, 0.1,      ]   ],   # 
+                                                             # 
+        [ [  L8,  L8,  L4,       L8,  L8,  L4,      ],       # 3
+          [ 0.1, 0.1, 0.1,      0.1, 0.1, 0.1,      ]   ],   # 
+                                                             # 
+        [ [  L4,       L8,  L8,  L4,       L8,  L8  ],       # 4
+          [ 0.1,      0.1, 0.1, 0.1,      0.1, 0.1, ]   ],   # 
+                                                             # 
+        [ [  L4,       L8,  L4,       L8,  L4,      ],       # 5
+          [ 0.1,      0.1, 0.1,      0.1, 0.1,      ]   ],   # 
+                                                             # 
+        [ [  L8,  L8,  L8,  L4,       L8,  L4,      ],       # 6
+          [ 0.1, 0.1, 0.1, 0.1,      0.1, 0.1,      ]   ],   # 
+                                                             # 
+        [ [  L4,       L4,       L8,  L8,  L4,      ],       # 7
+          [ 0.1,      0.1,      0.0, 0.1, 0.1,      ]   ],   # 
+                                                             # 
+        [ [  L4,       L4,       L8,  L8,  L8,  L8  ],       # 8
+          [ 0.1,      0.1,      0.0, 0.1, 0.1, 0.1, ]   ],   # 
+                                                             # 
+        [ [  L4,       L8,  L4,       L8,  L8,  L8  ],       # 9
+          [ 0.1,      0.1, 0.1,      0.1, 0.1, 0.1, ]   ],   # 
+                                                             # 
+        [ [  L8,  L8,  L4,       L8,  L8,  L4,       ],      # 10
+          [ 0.1, 0.1, 0.1,      0.0, 0.1, 0.1,       ]   ],  # 
+                                                             # 
+        [ [  L8,  L8,  L4,       L8,  L8,  L8,  L8  ],       # 11
+          [ 0.1, 0.1, 0.1,      0.0, 0.1, 0.1, 0.1, ]   ],   # 
+                                                             # 
+        [ [  L8,  L8,  L8,  L4,       L8,  L8,  L8  ],       # 12
+          [ 0.1, 0.1, 0.1, 0.1,      0.1, 0.1, 0.1, ]   ],   # 
+                                                             # 
+        [ [  L8,  L8,  L8,  L8,  L4,       L4,      ],       # 13
+          [ 0.1, 0.1, 0.1, 0.1, 0.1,      0.1,      ]   ],   # 
+                                                             # 
+#----                                                        # 
+        [ [  L8,  L8,  L8,  L8,  L8,  L8,  L8,  L8  ],       # 14
+          [ 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, ]   ],   # 
+                                                             # 
+        [ [  L8,  L8,  L8,  L8,  L8,  L8,  L8,  L8  ],       # 15
+          [ 0.1, 0.0, 0.1, 0.1, 0.1, 0.0, 0.1, 0.0, ]   ],   # 
+                                                             # 
+        [ [  L8,  L8,  L8,  L8,  L8,  L8,  L8,  L8  ],       # 16
+          [ 0.1, 0.0, 0.1, 0.0, 0.1, 0.1, 0.1, 0.0, ]   ],   # 
+                                                             # 
+        [ [  L8,  L8,  L8,  L8,  L8,  L8,  L8,  L8  ],       # 17
+          [ 0.1, 0.1, 0.1, 0.0, 0.1, 0.1, 0.1, 0.0, ]   ],   # 
+                                                             # 
+        [ [  L8,  L8,  L8,  L8,  L8,  L8,  L8,  L8  ],       # 18
+          [ 0.1, 0.0, 0.1, 0.1, 0.1, 0.0, 0.1, 0.1, ]   ],   # 
+                                                             # 
+        [ [  L8,  L8,  L8,  L8,  L8,  L8,  L8,  L8  ],       # 19
+          [ 0.1, 0.0, 0.1, 0.1, 0.0, 0.1, 0.1, 0.0, ]   ],   # 
+                                                             # 
+        [ [  L8,  L8,  L8,  L8,  L8,  L8,  L8,  L8  ],       # 20
+          [ 0.1, 0.1, 0.1, 0.1, 0.0, 0.1, 0.1, 0.0, ]   ],   # 
+                                                             # 
+        [ [  L8,  L8,  L8,  L8,  L8,  L8,  L8,  L8  ],       # 21
+          [ 0.1, 0.0, 0.1, 0.0, 0.0, 0.1, 0.1, 0.0, ]   ],   # 
+                                                             # 
+        [ [  L8,  L8,  L8,  L8,  L8,  L8,  L8,  L8  ],       # 22
+          [ 0.1, 0.0, 0.1, 0.0, 0.0, 0.1, 0.1, 0.1, ]   ],   # 
+                                                             # 
+        [ [  L8,  L8,  L8,  L8,  L8,  L8,  L8,  L8  ],       # 23
+          [ 0.1, 0.0, 0.1, 0.1, 0.0, 0.1, 0.1, 0.1, ]   ],   # 
+                                                             # 
+        [ [  L8,  L8,  L8,  L8,  L8,  L8,  L8,  L8  ],       # 24
+          [ 0.1, 0.1, 0.1, 0.0, 0.0, 0.1, 0.1, 0.0, ]   ],   # 
+                                                             # 
+        [ [  L8,  L8,  L8,  L8,  L8,  L8,  L8,  L8  ],       # 25
+          [ 0.1, 0.1, 0.1, 0.0, 0.0, 0.1, 0.1, 0.1, ]   ],   # 
+                                                             # 
+        [ [  L8,  L8,  L8,  L8,  L8,  L8,  L8,  L8  ],       # 26
+          [ 0.1, 0.1, 0.1, 0.1, 0.0, 0.1, 0.1, 0.1, ]   ],   # 
+                                                             # 
+        [ [  L8,  L8,  L8,  L8,  L8,  L8,  L8,  L8  ],       # 27
+          [ 0.1, 0.1, 0.1, 0.1, 0.1, 0.0, 0.1, 0.0, ]   ],   # 
+
+        # 16ãƒ“ãƒ¼ãƒˆ
+        [ [ L16, L16, L16, L16, L16, L16, L16, L16, L16, L16, L16, L16, L16, L16, L16, L16 ],      # 28
+          [ 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1 ]  ],   # 
+                                                                                                   # 
+        # ã‚·ã‚§ã‚¤ã‚¯                                                                                 # 
+        [ [  L8,  L8,  L8,  L16,  L16,   L8,  L8,  L8,  L8  ],                                     # 29
+          [ 0.1, 0.0, 0.1,  0.0,  0.1,  0.1, 0.1, 0.1, 0.0, ]   ],                                 # 
+                                                                                                   # 
+        [ [  L8,  L8,  L8,   L8,   L8,   L8,  L16,  L16, L16,  L16  ],                             # 30
+          [ 0.1, 0.0, 0.1,  0.1,  0.1,  0.1,  0.0,  0.1, 0.0,  0.1  ]   ],                         # 
+                                                                                                   # 
+        [ [  L8,  L8,  L8,  L16,  L16,  L16,  L16,   L8,  L8,  L16,  L16   ],                      # 31
+          [ 0.1, 0.0, 0.1,  0.1,  0.1,  0.1,  0.1,  0.0, 0.1,  0.0,  0.0   ]   ],                  # 
+        
+        ]
+    
+    tl_Rythem_Pattern = random.choice( tl_Rythem_Pattern_List )
+    tl_Rythem_Pattern = tl_Rythem_Pattern_List[ ti_indx ]
+    
+    tl_Rythem_Pattern[0]
+    tl_Rythem_Pattern[1]
+    i = 0
+    while ti_ChordLen > 0:
+        ti_ChordLen = ti_ChordLen - tl_Rythem_Pattern[0][i]
+        tl_RythemList.append( tl_Rythem_Pattern[0][i] )
+        tl_VolumeList.append( tl_Rythem_Pattern[1][i] )
+        i = i + 1
+    
+    return tl_RythemList, tl_VolumeList
+
+
+
+#######################################################################################
+#  ãƒ¡ãƒ­ãƒ‡ã‚£ã‚’ä½œã‚‹
+#  ã‚³ãƒ¼ãƒ‰ã¨ãƒªã‚ºãƒ ã‹ã‚‰ãƒ¡ãƒ­ãƒ‡ã‚£ã‚’ä½œã‚‹
+#######################################################################################
+
+# --- ãƒ‘ã‚¿ãƒ¼ãƒ³1 ---
+
+def make_melody( tl_RythemList, tl_Chord, ts_Key ):
+    print("--- Making Melody ---")
+    tl_Melody  = []
+    ts_PreNote = ""
+    
+    
+    D_INIT_OCTAVE = 1
+    ti_octave     = D_INIT_OCTAVE 
+    
+    ti_RythemListLen = len(tl_RythemList)
+    
+    for i in range(ti_RythemListLen):
+        tl_Notes = []
+        # ä¸€å€‹ç›®ã®éŸ³ã¯ã€ã‚³ãƒ¼ãƒ‰ã«å«ã¾ã‚Œã‚‹éŸ³ã‹ã‚‰é¸æŠã™ã‚‹
+        if ( i == 0 ):
+            ts_Note = random.choice( tl_Chord )  # ã‚³ãƒ¼ãƒ‰ã‹ã‚‰éŸ³ã‚’é¸ã¶
+        # äºŒå€‹ç›®ä»¥é™ã®éŸ³ã¯ãƒ»ãƒ»ãƒ»
+        else:
+            tl_Chord_temp = tl_Chord.copy()
+            tl_DiatonicChord = make_diatonic_chord(ts_Key)
+            
+            if ( tl_RythemList[ i ] <= L8 ) & ( ts_PreNote in tl_DiatonicChord ):
+                ti_index = tl_DiatonicChord.index(ts_PreNote)
+                p = random.random()
+                if p < 0.5:
+                    tl_Chord_temp = []
+                if tl_RythemList[ i ] <= L16:
+                    tl_Chord_temp = []
+                try:
+                    tl_Chord_temp.append( tl_DiatonicChord[ ti_index + 1 ] )   # åŠéŸ³ or å…¨éŸ³â†‘
+                except:
+                    pass
+                try:
+                    if ( ti_index - 1 ) > 0:
+                        tl_Chord_temp.append( tl_DiatonicChord[ ti_index - 1 ] )   # åŠéŸ³ or å…¨éŸ³â†“ 
+                except:
+                    pass
+                    
+            ## 47æŠœãéŸ³éš
+            #for idx in [ 10, 13, 17, 20 ]:
+            #    try:
+            #        tl_Chord_temp.remove(idx)  # 47æŠœãéŸ³éš
+            #    except:
+            #        pass
+
+
+            ts_Note = random.choice( tl_Chord_temp )  # ã‚³ãƒ¼ãƒ‰ã‹ã‚‰éŸ³ã‚’é¸ã¶
+        
+        # ã‚ªã‚¯ã‚¿ãƒ¼ãƒ–é£›ã°ã™ã‹ã©ã†ã‹
+        p = random.random()
+        if p > 1:
+            if ti_octave == D_INIT_OCTAVE:
+                ti_octave += 1
+            else:
+                ti_octave -= 1
+        xxx = on_the_octave( ts_Note, ti_octave )
+        
+        tl_Notes.append( xxx )
+        if tl_RythemList[ i ] >= L4:
+            tl_Chord_temp = tl_Chord.copy()
+            if ts_Note in tl_Chord_temp:
+                tl_Chord_temp.remove( ts_Note )
+                ts_Note2 = random.choice( tl_Chord_temp )
+                xxx = on_the_octave( ts_Note2, ti_octave )
+                #tl_Notes.append( xxx )            # ãƒãƒ¢ãƒªã‚’è¿½åŠ 
+                
+                
+            
+        tl_Melody.append( tl_Notes )
+        ts_PreNote = ts_Note
+    
+    return tl_Melody
+
 ##################################
-# ƒIƒNƒ^[ƒuã‚Ì‰¹‚ğ•Ô‚·
+# ã‚ªã‚¯ã‚¿ãƒ¼ãƒ–ä¸Šã®éŸ³ã‚’è¿”ã™
 ##################################
 def on_the_octave(sound='C4', octave=1):
     length = len(sound)
@@ -213,8 +551,9 @@ def on_the_octave(sound='C4', octave=1):
     return sound_on_the_octave
 
 
+
 ##################################
-# ƒŠƒXƒg‚©‚ç“Á’è‚Ì’l‚ğíœ
+# ãƒªã‚¹ãƒˆã‹ã‚‰ç‰¹å®šã®å€¤ã‚’å‰Šé™¤
 ##################################
 def remove_specified_values(arr, value):
     while value in arr:
@@ -222,244 +561,47 @@ def remove_specified_values(arr, value):
 
 
 
+
+
 ##################################
-# ƒ‰ƒ“ƒ_ƒ€‚ÉƒŠƒYƒ€¶¬
+# MIDIãƒ•ã‚¡ã‚¤ãƒ«ã¸å‡ºåŠ›ã™ã‚‹
 ##################################
-def make_rythem( BAR_LEN=L4, BAR_NUM=1, LIST_NOTE=[ L4, L8 ] ):
-    print("--- Making Rythem ---")
+def output_midi( tC_MidiList, program_num ):
+
+    instrument = pretty_midi.Instrument(program=program_num)
     
-    t_list_rhythm = []
-    t_list_volume = []
+    st = 0
+    # å°ç¯€æ•°ã‚’å–å¾—
+    ti_BarLen = len(tC_MidiList.tl_MelodyList)
+    for j in range(ti_BarLen):
+        # æ‹æ•°ã‚’å–å¾—
+        ti_Len = len(tC_MidiList.tl_MelodyList[ j ])
+        for i in range(ti_Len):
+            ed = st + tC_MidiList.tl_RythemList[ j ][ i ]
+            for ts_Note in tC_MidiList.tl_MelodyList[ j ][ i ]:
+                note_number = pretty_midi.note_name_to_number(ts_Note)
+                note        = pretty_midi.Note(velocity=120, pitch=note_number, start=st, end=ed)
+                if tC_MidiList.tl_VolumeList[ j ][ i ] > 0:
+                    instrument.notes.append(note)
+            st = ed
+    return instrument
     
-    for i in range(BAR_NUM):
-        t_bar_len = BAR_LEN
-        list_bar_rhythem = []
-
-        while t_bar_len > 0 :
-            temp = LIST_NOTE.copy()
-            for lx in [ L2, L3, L4, L6, L8, L12, L16, L32 ]:
-                if t_bar_len >= lx:
-                    Lx = random.choice( temp )
-                    t_bar_len = t_bar_len - Lx
-                    t_list_rhythm.append( Lx )
-                    list_bar_rhythem.append( Lx )
-                    # ‰¹—Ê‚ğŒˆ‚ß‚é
-                    vol = random.random()
-                    if vol < 1:
-                        volume = 0.1
-                    else:
-                        volume = 0
-                    t_list_volume.append( volume )
-                    break
-                else:
-                    remove_specified_values( temp, lx )
-
-    return t_list_rhythm, t_list_volume
 
 
-def make_rythem2( BAR_LEN=L4, BAR_NUM=1, LIST_NOTE=[ L4, L8 ] ):
-    print("--- Making Rythem ---")
-    
-    t_list_rhythm = []
-    t_list_volume = []
-    for i in range(BAR_NUM):
-        t_bar_len = BAR_LEN
-        list_bar_rhythem = []
+##################################
+# MIDIãƒ•ã‚¡ã‚¤ãƒ«ã¸å‡ºåŠ›ç”¨ã‚¯ãƒ©ã‚¹å®šç¾©
+##################################
+class MidiList:
+    def __init__( self ):
+        self.tl_MelodyList = []
+        self.tl_RythemList = []
+        self.tl_VolumeList = []
+    def append( self, tl_Melody, tl_Rythem, tl_Volume ):
+        self.tl_MelodyList.append( tl_Melody )
+        self.tl_RythemList.append( tl_Rythem )
+        self.tl_VolumeList.append( tl_Volume )
         
-        while t_bar_len > 0 :
-            if t_bar_len >= L2:
-                Lx = random.choice( [ L4, L8 ] )
-            elif  t_bar_len >= L4:
-                Lx = random.choice( [ L4, L4, L4, L8, L8,  ] )
-            elif  t_bar_len >= L8:
-                Lx = random.choice( [ L8, L8, L8, L8 ] )
-            elif  t_bar_len >= L16:
-                Lx = random.choice( [ L16 ] )
 
-            t_bar_len = t_bar_len - Lx
-            t_list_rhythm.append( Lx )
-            list_bar_rhythem.append( Lx )
-            # ‰¹—Ê‚ğŒˆ‚ß‚é
-            vol = random.random()
-            if vol < 1:
-                volume = 0.1
-            else:
-                volume = 0
-            t_list_volume.append( volume )
-
-    return t_list_rhythm, t_list_volume
-
-
-def make_rythem3( BAR_LEN=L4, BAR_NUM=1, LIST_NOTE=[ L4, L8 ] ):
-    print("--- Making Rythem ---")
-    
-    t_list_bar_rythem = []
-    t_list_bar_volume = []
-
-    t_bar_len = BAR_LEN
-    while t_bar_len > 0 :
-        temp = LIST_NOTE.copy()
-        for lx in [ L2, L3, L4, L6, L8, L12, L16, L32 ]:
-            if t_bar_len >= lx:
-                Lx = random.choice( temp )
-                t_list_bar_rythem.append( Lx )
-                t_bar_len = t_bar_len - Lx
-                
-                # ‰¹—Ê‚ğŒˆ‚ß‚é
-                vol = random.random()
-                if vol < 0.9:
-                    volume = 0.1
-                else:
-                    volume = 0
-                t_list_bar_volume.append( volume )
-                break
-            else:
-                remove_specified_values( temp, lx )
-    
-    t_list_rhythm = []
-    t_list_volume = []
-    
-    for i in range(BAR_NUM):
-        j = 0
-        for rythem in t_list_bar_rythem:
-            t_list_rhythm.append( t_list_bar_rythem[j] )
-            t_list_volume.append( t_list_bar_volume[j]  )
-            j+=1
-
-    return t_list_rhythm, t_list_volume
-
-
-##################################
-# ƒƒƒfƒB¶¬(©“®)
-##################################
-def make_melody0( chord_progression, LIST_NOTE=[], BAR_LEN = L4, key='C' ):
-    t_list_rhythm = []
-    t_list_melody = []
-    t_list_volume = []
-    melody = ""
-
-    # ƒŠƒYƒ€‚ğŒˆ‚ß‚é
-    BAR_NUM = len(chord_progression)
-    t_list_rhythm, t_list_volume =  make_rythem2( BAR_LEN, BAR_NUM, LIST_NOTE )
-
-    print("--- Making Melody ---")
-    # ‰¹‚ğŒˆ‚ß‚é
-    i = 0
-    l = BAR_LEN
-    for Lx in t_list_rhythm:
-        DiatonicChord = select_key(key)
-        chord = ret_chord(chord_progression[i], key)
-        if( Lx <= L8 ):
-            if melody in chord:
-                index_temp = DiatonicChord.index(melody)
-                n = random.choice([1, -1])
-                temp = chord.copy()
-                temp.append( DiatonicChord[ index_temp + n ] )
-                melody = random.choice(temp)
-            else:
-                melody = random.choice(chord)        # ƒR[ƒhƒg[ƒ“‚©‚ç‘I‚Ô
-        else:
-            melody = random.choice(chord)        # ƒR[ƒhƒg[ƒ“‚©‚ç‘I‚Ô
-
-        print( Lx, melody )
-        # ƒŠƒXƒg‚ÖŠi”[‚·‚é
-        m = random.choice([1, 2])
-        m = 1
-        t_list_melody.append( on_the_octave(melody, m) )
-
-        l = l - Lx
-        if l <= 0:
-            l = BAR_LEN
-            i+=1
-            print("---")
-        
-        #play_wave(stream, volume*tone(dict_sound[melody],   Lx, 1.0) ) 
-           
-    return t_list_rhythm, t_list_melody, t_list_volume
-
-
-def make_melody( chord_progression, LIST_NOTE=[], BAR_LEN = L4, key='C' ):
-    t_list_rhythm = []
-    t_list_melody = []
-    t_list_volume = []
-    melody = ""
-    m = 1
-    
-    # ƒŠƒYƒ€‚ğŒˆ‚ß‚é
-    BAR_NUM = len(chord_progression)
-    t_list_rhythm, t_list_volume =  make_rythem3( BAR_LEN, BAR_NUM, LIST_NOTE )
-
-    print("--- Making Melody ---")
-    # ‰¹‚ğŒˆ‚ß‚é
-    i = 0
-    l = BAR_LEN
-    for Lx in t_list_rhythm:
-        if l == BAR_LEN:
-            # ƒIƒNƒ^[ƒuã‚ª‚é‚©‚Ç‚¤‚©
-            a = random.random()
-            if a > 0.95:
-                m += 1
-                if m > 2:
-                    m = 1
-        DiatonicChord = select_key(key)
-        chord = ret_chord(chord_progression[i], key)
-        if( Lx <= L16 ):
-            if melody in chord:
-                index_temp = DiatonicChord.index(melody)
-                n = random.choice([1, -1])
-                temp = chord.copy()
-                temp.append( DiatonicChord[ index_temp + 1 ] )
-                temp.append( DiatonicChord[ index_temp - 1 ] )
-                melody = random.choice(temp)
-            else:
-                melody = random.choice(chord)        # ƒR[ƒhƒg[ƒ“‚©‚ç‘I‚Ô
-        else:
-            # ˆêŒÂ‘O‚É‘I‚ñ‚¾‰¹‚É‹ß‚¢‰¹‚ğ‘I‚Ô
-            try:
-                index_temp = DiatonicChord.index(melody)
-                temp = chord.copy()
-                temp.append( DiatonicChord[ index_temp + 1 ] )
-                temp.append( DiatonicChord[ index_temp - 1 ] )
-                melody = random.choice(temp)
-            except:
-                melody = random.choice(chord)        # ƒR[ƒhƒg[ƒ“‚©‚ç‘I‚Ô
-                pass
-        print( Lx, melody )
-        # ƒŠƒXƒg‚ÖŠi”[‚·‚é
-        
-        t_list_melody.append( on_the_octave(melody, m) )
-
-        l = l - Lx
-        if l <= 0:
-            l = BAR_LEN
-            i+=1
-            print("---")
-        
-        #play_wave(stream, volume*tone(dict_sound[melody],   Lx, 1.0) ) 
-           
-    return t_list_rhythm, t_list_melody, t_list_volume
-
-
-
-##################################
-# ƒx[ƒXƒ‰ƒCƒ“¶¬
-##################################
-def make_base_line( chord_progression=[], BAR_LEN = L4, rhythm_pattern=[], volume_pattern=[], key='C' ):
-    print("--- Making Base ---")
-    list_rhythm = []
-    list_melody = []
-    list_volume = []
-    
-    for chord in chord_progression:
-        chord = ret_chord(chord, key)
-        
-        for rhythm in rhythm_pattern:
-            list_rhythm.append( rhythm )
-            list_melody.append( chord  )
-        for volume in volume_pattern:
-            list_volume.append( volume )
-
-    return list_rhythm, list_melody, list_volume
 
 
 
