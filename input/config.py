@@ -4,17 +4,17 @@ from input.util import *
 ##################
 # 一小節の長さ
 ##################
-BAR_LEN = L2
+BAR_LEN = L4
 
 
 ##################
 # 使用する音符のリスト
 ##################
 LIST_NOTE1 = [  L4, L4, L8, L8, L8 ]
-LIST_NOTE2 = [  L8, L8, L8, L8, L16 ]
+LIST_NOTE2 = [  L4, L8, L8, L8 ]
 
-BASE_RYTHEM = [ BAR_LEN/2, BAR_LEN/2 ]
-BASE_VOLUME = [ 0.1, 0.1 ]
+BASE_RYTHEM = [ BAR_LEN/2, BAR_LEN/4,BAR_LEN/4, ]
+BASE_VOLUME = [ 0.1, 0.1, 0.1, 0.1 ]
 
 
 ##################
@@ -128,42 +128,7 @@ Original5 = [
 
 ]
 
-
-MEGALOVANIA = [
-    VI,   VI,   VI,    V,   VI,   IV,   VI,   IV,   
-    VI,   VI,   VI,    V,   VI,   IV,   VI,   V,
-    
-    VI,   VI,   VI,    V,   VI,   IV,   VI,   IV,   
-    VI,   VI,   VI,    V,   VI,   IV,   VI,   V,
-    
-     VI,   VI,   V,     V,   IV,   IV,   IV,   IV,
-     VI,   VI,   V,     V,   IV,   IV,   IV,   IV,
-
-    VI,   VI,   VI,    V,   VI,   IV,   VI,   IV,   
-    VI,   VI,   VI,    V,   VI,   IV,   VI,   V,
-
-    VI,   VI,   V,     V,   IV,   IV,   IV,   IV,
-    VI,   VI,   V,     V,   IV,   IV,   IV,   IV,
-
-]
-
-
-# The World Revolving  key=B
-The_World_Revolving = [
-    # Aメロ
-    VI,    VI,     VI,     VI,     IV,    IV,    IV,    V,
-    VI,    VI,     VI,     VI,     IV,    II,    III,   V,
-
-    VI,    VI,     VI,     VI,     IV,    IV,    IV,    V,
-    VI,    VI,     VI,     VI,     IV,    II,    III,   V,
-
-    # Bメロ
-    IV,    IV,     V,      V,      VI,    VI,    I,     I,    
-    IV,    IV,     I,      I,      V,     V,     VI,    VI,
-
-    IV,    IV,     V,      V,      VI,    VI,    I,     I,    
-    IV,    IV,     I,      I,      V,     V,     VI,    VI,
-
+Original6 = [
     # Cメロ
     IV,    IV,     V,      V,      VI,    VI,    I,     I,    
     IV,    IV,     I,      I,      V,     V,     VI,    VI,
@@ -171,22 +136,28 @@ The_World_Revolving = [
     IV,    IV,     V,      V,      VI,    VI,    I,     I,    
     IV,    IV,     I,      I,      V,     V,     VI,    VI,
 
-    # Dメロ
-    IV,    IV,     IV,     IV,     I,     I,     V,     V,
-    IV,    IV,     IV,     IV,     I,     I,     VI7,   III,
-
-    IV,    IV,     IV,     IV,     I,     I,     V,     V,
-    IV,    IV,     IV,     IV,     I,     I,     VI7,   III,
-
     # Eメロ
     IV,    IV,     V,      V,      VI,    VI,    V,     V,
     IV,    IV,     V,      V,      VI,    VI,    I,     I,
     
     IV,    IV,     V,      V,      VI,    VI,    V,     V,
     IV,    IV,     V,      V,      VI,    VI,    I,     I,
-]
 
-chord_progression = The_World_Revolving
+    # Aメロ
+    VI,    VI,     VI,     VI,     IV,    IV,    IV,    V,
+    VI,    VI,     VI,     VI,     IV,    II,    III,   V,
+
+    VI,    VI,     VI,     VI,     IV,    IV,    IV,    V,
+    VI,    VI,     VI,     VI,     IV,    II,    III,   V,
+    
+    # サビ
+    IV,   IV,   V,      V,       III7,  III7,  VI7,  VI7,
+    IV,   IV,   V,      V,       III7,  III7,  VI7,  VI7,
+
+    IV,   IV,   III7,   III7,    VI,    VI,   V7,   I, 
+    IV,   IV,   III7,   III7,    VI,    VI,   V7,   I, 
+]
+chord_progression = Original6
 
 
 

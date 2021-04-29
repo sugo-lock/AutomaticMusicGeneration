@@ -270,9 +270,9 @@ def make_rythem2( BAR_LEN=L4, BAR_NUM=1, LIST_NOTE=[ L4, L8 ] ):
             if t_bar_len >= L2:
                 Lx = random.choice( [ L4, L8 ] )
             elif  t_bar_len >= L4:
-                Lx = random.choice( [ L4, L8, L8, L8, L8,  ] )
+                Lx = random.choice( [ L4, L4, L4, L8, L8,  ] )
             elif  t_bar_len >= L8:
-                Lx = random.choice( [ L8, L8, L8, L8, L16, L16 ] )
+                Lx = random.choice( [ L8, L8, L8, L8 ] )
             elif  t_bar_len >= L16:
                 Lx = random.choice( [ L16 ] )
 
