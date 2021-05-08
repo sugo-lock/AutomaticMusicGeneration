@@ -578,17 +578,19 @@ def make_melody2( tl_Bar_RythemList, tl_Chord_Pregression, tl_List_ChordLen, ts_
                 tl_Chord_temp = tl_Chord.copy()
                 tl_DiatonicChord = make_diatonic_chord(ts_Key)
                 
-                if ( tl_Bar_RythemList[n] <= L8 ) & ( ts_PreNote in tl_DiatonicChord ):
-                    ti_index = tl_DiatonicChord.index(ts_PreNote)
-                    p = random.random()
+                # ダイアトニックコードにもコードにも含まれている場合
+                if ( ts_PreNote in tl_DiatonicChord ) & ( ts_PreNote in tl_Chord ):
+                    ti_index = tl_DiatonicChord.index(ts_PreNote)    # インデックス取得
                     
                     # 〇%の確率で隣の音にする
-                    if p < 0.5:
-                        tl_Chord_temp = []
+                    #p = random.random()
+                    #if p < 0.6:
+                    #    tl_Chord_temp = []
 
                     # 16音符より短い場合は、前の音と隣の音にする
-                    if tl_Bar_RythemList[n] <= L16:
-                        tl_Chord_temp = []
+                    #if tl_Bar_RythemList[n] <= L16:
+                    #    tl_Chord_temp = []
+
                     try:
                         tl_Chord_temp.append( tl_DiatonicChord[ ti_index + 1 ] )   # 半音 or 全音↑
                     except:
@@ -599,8 +601,15 @@ def make_melody2( tl_Bar_RythemList, tl_Chord_Pregression, tl_List_ChordLen, ts_
                     except:
                         pass
 
-            ti_m = ti_m + 1
+            # 47抜き音階
+            tl_Chord_temp_ = []
+            for chord in tl_Chord_temp:
+                if chord in [ 'C2', 'D2', 'E2', 'G2', 'A2', 'C3', 'D3', 'E3', 'G3', 'A3', 'C4', 'D4', 'E4', 'G4', 'A4', 'C5', 'D5', 'E5', 'G5', 'A5']:
+                    tl_Chord_temp_.append( chord )
+            tl_Chord_temp = tl_Chord_temp_
+
             ts_Note = random.choice( tl_Chord_temp )  # コードから音を選ぶ
+
             
             # オクターブ飛ばすかどうか
             p = random.random()
@@ -610,6 +619,58 @@ def make_melody2( tl_Bar_RythemList, tl_Chord_Pregression, tl_List_ChordLen, ts_
                 else:
                     ti_octave -= 1
             xxx = on_the_octave( ts_Note, ti_octave )
+            tl_Bar_MelodyList.append( [ xxx ] )
+
+            ti_m = ti_m + 1
+            n = n + 1
+            ts_PreNote = ts_Note
+    
+    return tl_Bar_MelodyList
+
+
+
+
+
+#######################################################################################
+#
+#  第一音と第三音を繰り返すメロディを生成する
+#  Input ：リズム
+#          コード進行
+#          各コードの長さ
+#          キー
+#  Output：メロディ(ベース)
+#
+#######################################################################################
+
+def make_melody3( tl_Bar_RythemList, tl_Chord_Pregression, tl_List_ChordLen, ts_Key ):
+    print("--- Making Melody ---")
+    # 初期化
+    tl_Bar_MelodyList = []
+    ts_PreNote = ""
+    D_INIT_OCTAVE = 1
+    ti_octave     = D_INIT_OCTAVE
+    n = 0
+    
+    ti_ChordPregressionLen = len( tl_Chord_Pregression )                     # 一小節を構成するコードの数を取得
+    
+    # 一小節
+    for j in range( ti_ChordPregressionLen ):
+        tl_Chord    = Dec2Chord( tl_Chord_Pregression[ j ], ts_Key )         # コード進行を数字表記⇒英語表記にする
+        tl_ChordLen = tl_List_ChordLen[ j ]                                  # コードの拍を取得する
+        # コード毎
+        ti_m = 0
+        while tl_ChordLen > 0:
+            tl_ChordLen = tl_ChordLen - tl_Bar_RythemList[n]
+            
+            # コードの1音目の場合
+            if ti_m%2 == 0:
+                ts_Note = tl_Chord[0]
+            else:
+                ts_Note = tl_Chord[2]
+            ti_m = ti_m + 1
+            
+            # オクターブ飛ばすかどうか
+            xxx = on_the_octave( ts_Note, D_INIT_OCTAVE )
             tl_Bar_MelodyList.append( [ xxx ] )
             n = n + 1
             ts_PreNote = ts_Note
