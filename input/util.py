@@ -25,7 +25,6 @@ D_LIST_SOUND = [ 'C2', 'Db2', 'D2', 'Eb2', 'E2', 'F2', 'Gb2', 'G2', 'Ab2', 'A2',
 
 
 
-
 ##################################
 # 度数表記コードを定義
 ##################################
@@ -176,6 +175,36 @@ def Dec2Chord( ts_NumChord ='I', ts_Key= 'C' ):
         return  [ D_LIST_SOUND[ ti_idx + 0  ],           D_LIST_SOUND[ ti_idx +  4 ],          D_LIST_SOUND[ ti_idx +  7 ]  ]
 
 
+#################################
+# 47抜き音階を返す
+#################################
+def Ret2ScaleWithout47( ts_Key= 'C' ):
+    ret_list = []
+    
+    # Key
+    if   ts_Key == 'C':
+        ti_idx = 0
+    elif ts_Key == 'D':
+        ti_idx = 2
+    elif ts_Key == 'E':
+        ti_idx = 4
+    elif ts_Key == 'F':
+        ti_idx = 5
+    elif ts_Key == 'G':
+        ti_idx = 7
+    elif ts_Key == 'A':
+        ti_idx = 9
+    elif ts_Key == 'B':
+        ti_idx = 11
+    
+    
+    for i in range(4):
+        for j in [0, 2, 4, 7, 9]:
+            try:
+                ret_list.append ( D_LIST_SOUND[idx + i*12 +j]   )
+            except:
+                break
+    return ret_list
 
 
 ####################################
@@ -583,13 +612,13 @@ def make_melody2( tl_Bar_RythemList, tl_Chord_Pregression, tl_List_ChordLen, ts_
                     ti_index = tl_DiatonicChord.index(ts_PreNote)    # インデックス取得
                     
                     # 〇%の確率で隣の音にする
-                    #p = random.random()
-                    #if p < 0.6:
-                    #    tl_Chord_temp = []
+                    p = random.random()
+                    if p < 0.6:
+                        tl_Chord_temp = []
 
                     # 16音符より短い場合は、前の音と隣の音にする
-                    #if tl_Bar_RythemList[n] <= L16:
-                    #    tl_Chord_temp = []
+                    if tl_Bar_RythemList[n] <= L16:
+                        tl_Chord_temp = []
 
                     try:
                         tl_Chord_temp.append( tl_DiatonicChord[ ti_index + 1 ] )   # 半音 or 全音↑
@@ -602,11 +631,16 @@ def make_melody2( tl_Bar_RythemList, tl_Chord_Pregression, tl_List_ChordLen, ts_
                         pass
 
             # 47抜き音階
-            tl_Chord_temp_ = []
-            for chord in tl_Chord_temp:
-                if chord in [ 'C2', 'D2', 'E2', 'G2', 'A2', 'C3', 'D3', 'E3', 'G3', 'A3', 'C4', 'D4', 'E4', 'G4', 'A4', 'C5', 'D5', 'E5', 'G5', 'A5']:
-                    tl_Chord_temp_.append( chord )
-            tl_Chord_temp = tl_Chord_temp_
+            #Scale_Without_47 = Ret2ScaleWithout47( ts_Key )
+            #
+            #tl_Chord_temp_ = []
+            #for chord in tl_Chord_temp:
+            #    if chord in Scale_Without_47:
+            #        tl_Chord_temp_.append( chord )
+            #if tl_Chord_temp_ != []:
+            #    tl_Chord_temp = tl_Chord_temp_
+
+
 
             ts_Note = random.choice( tl_Chord_temp )  # コードから音を選ぶ
 
